@@ -6,67 +6,58 @@
                 @if(isset($settings) && $settings && $settings->logo_link)
                     <img src="{{ asset('storage/' . $settings->logo_link) }}" alt="{{ $settings->site_name ?? 'Core Framework' }}" class="h-10 w-auto">
                 @else
-                    <div class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold">
+                    <div class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold">
                         Core Framework
                     </div>
                 @endif
             </a>
 
+            <!-- Search Bar (Desktop) -->
+            <div class="hidden md:block flex-1 max-w-md mx-8">
+                @livewire('search-suggestions')
+            </div>
+
             <!-- Navigation Links -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="{{ route('storeFront') }}" class="text-gray-700 hover:text-blue-600 transition">Home</a>
-                <a href="{{ route('posts.index') }}" class="text-gray-700 hover:text-blue-600 transition">Posts</a>
-                @if(isset($postCategories) && $postCategories->isNotEmpty())
-                    <div class="relative group">
-                        <button class="text-gray-700 hover:text-blue-600 transition flex items-center">
-                            Categories
-                            <i class="fas fa-chevron-down ml-1 text-xs"></i>
-                        </button>
-                        <div class="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                            @foreach($postCategories as $category)
-                            <a href="{{ route('posts.category', $category->slug) }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition">
-                                {{ $category->name }}
-                            </a>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-                <a href="/admin" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Admin</a>
+            <div class="hidden md:flex items-center space-x-6">
+                @livewire('dynamic-menu', [
+                    'position' => 'horizontal',
+                    'style' => 'navbar',
+                    'showIcons' => false,
+                    'maxDepth' => 2
+                ])
+
+                <a href="{{ route('filament.admin.pages.dashboard') }}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
+                    <i class="fas fa-cog mr-2"></i>Admin
+                </a>
             </div>
 
             <!-- Mobile Menu Button -->
-            <button class="md:hidden p-2" id="mobile-menu-btn">
+            <button class="md:hidden p-2" x-data @click="$dispatch('toggle-mobile-menu')">
                 <i class="fas fa-bars text-gray-700"></i>
             </button>
         </div>
 
+        <!-- Mobile Search -->
+        <div class="md:hidden pb-4">
+            @livewire('search-suggestions')
+        </div>
+
         <!-- Mobile Menu -->
-        <div class="md:hidden hidden" id="mobile-menu">
-            <div class="py-4 border-t">
-                <a href="{{ route('storeFront') }}" class="block py-2 text-gray-700 hover:text-blue-600 transition">Home</a>
-                <a href="{{ route('posts.index') }}" class="block py-2 text-gray-700 hover:text-blue-600 transition">Posts</a>
-                @if(isset($postCategories) && $postCategories->isNotEmpty())
-                    @foreach($postCategories as $category)
-                    <a href="{{ route('posts.category', $category->slug) }}" class="block py-2 pl-4 text-gray-600 hover:text-blue-600 transition">
-                        {{ $category->name }}
+        <div class="md:hidden" x-data="{ open: false }" @toggle-mobile-menu.window="open = !open">
+            <div x-show="open" x-transition class="py-4 border-t">
+                @livewire('dynamic-menu', [
+                    'position' => 'vertical',
+                    'style' => 'sidebar',
+                    'showIcons' => true,
+                    'maxDepth' => 2
+                ])
+
+                <div class="mt-4 pt-4 border-t">
+                    <a href="{{ route('filament.admin.pages.dashboard') }}" class="flex items-center py-2 text-red-600 font-semibold">
+                        <i class="fas fa-cog mr-2"></i>Admin Panel
                     </a>
-                    @endforeach
-                @endif
-                <a href="/admin" class="block py-2 text-blue-600 font-semibold">Admin</a>
+                </div>
             </div>
         </div>
     </div>
 </nav>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    
-    if (mobileMenuBtn && mobileMenu) {
-        mobileMenuBtn.addEventListener('click', function() {
-            mobileMenu.classList.toggle('hidden');
-        });
-    }
-});
-</script>

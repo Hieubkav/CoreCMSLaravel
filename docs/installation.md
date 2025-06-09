@@ -1,180 +1,171 @@
-# Hướng dẫn Cài đặt
+# Hướng dẫn cài đặt
 
-Tài liệu này hướng dẫn chi tiết cách cài đặt dự án Vũ Phúc từ đầu.
+## 📋 Yêu cầu hệ thống
 
-## 📋 Yêu cầu Hệ thống
+- **PHP:** 8.1 trở lên
+- **Composer:** Phiên bản mới nhất
+- **Node.js:** 16+ và NPM
+- **Database:** MySQL 5.7+ hoặc PostgreSQL 10+
+- **Web server:** Apache hoặc Nginx
 
-### Phần mềm bắt buộc
-- **PHP**: >= 8.1
-- **Composer**: Latest version
-- **Node.js**: >= 16.x
-- **NPM**: >= 8.x
-- **Database**: MySQL 8.0+ hoặc PostgreSQL 13+
+## ⚡ Cài đặt nhanh
 
-### Extensions PHP cần thiết
+### Bước 1: Tải về
+
 ```bash
-php -m | grep -E "(pdo|mbstring|openssl|tokenizer|xml|ctype|json|bcmath|gd|fileinfo)"
+git clone https://github.com/your-repo/core-laravel-framework.git
+cd core-laravel-framework
 ```
 
-## 🛠️ Cài đặt từng bước
+### Bước 2: Cài đặt dependencies
 
-### 1. Clone Repository
 ```bash
-git clone [repository-url] vuphuc
-cd vuphuc
-```
-
-### 2. Cài đặt Dependencies
-
-#### PHP Dependencies
-```bash
-composer install --ignore-platform-reqs
-```
-
-> **Lưu ý**: Sử dụng `--ignore-platform-reqs` nếu gặp lỗi trên Windows
-
-#### JavaScript Dependencies
-```bash
+composer install
 npm install
 ```
 
-### 3. Cấu hình Môi trường
+### Bước 3: Cấu hình môi trường
 
-#### Tạo file .env
 ```bash
 cp .env.example .env
-```
-
-#### Tạo Application Key
-```bash
 php artisan key:generate
 ```
 
-#### Cấu hình Database
+### Bước 4: Cấu hình database
+
 Chỉnh sửa file `.env`:
+
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=vuphuc
+DB_DATABASE=corelaravel
 DB_USERNAME=root
-DB_PASSWORD=
+DB_PASSWORD=your_password
 ```
 
-### 4. Thiết lập Database
+### Bước 5: Build assets
 
-#### Tạo Database
-```sql
-CREATE DATABASE vuphuc CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-#### Chạy Migration
-```bash
-php artisan migrate
-```
-
-#### Seed dữ liệu mẫu
-```bash
-php artisan db:seed
-```
-
-### 5. Cấu hình Storage
-
-#### Tạo symbolic link
-```bash
-php artisan storage:link
-```
-
-#### Thiết lập quyền (Linux/Mac)
-```bash
-chmod -R 775 storage bootstrap/cache
-```
-
-### 6. Build Assets
-
-#### Development
-```bash
-npm run dev
-```
-
-#### Production
 ```bash
 npm run build
 ```
 
-### 7. Tối ưu hóa
+### Bước 6: Chạy Setup Wizard
 
-```bash
-# Cache icons
-php artisan icons:cache
-
-# Optimize Filament
-php artisan filament:optimize
-
-# Optimize Laravel
-php artisan optimize
-```
-
-## 🚀 Khởi động
-
-### Development Server
 ```bash
 php artisan serve
 ```
 
-Truy cập: http://127.0.0.1:8000
+Truy cập: `http://localhost:8000/setup`
 
-### Admin Panel
-Truy cập: http://127.0.0.1:8000/admin
+## 🎯 Setup Wizard
 
-**Tài khoản mặc định:**
-- Email: admin@vuphuc.com
-- Password: password
+### Bước 1: Database
+- Kiểm tra kết nối database
+- Tự động chạy migrations
 
-## ✅ Kiểm tra Cài đặt
+### Bước 2: Admin User
+- Tạo tài khoản admin đầu tiên
+- Thiết lập mật khẩu
 
-### Kiểm tra Laravel
+### Bước 3: Website Settings
+- Tên website
+- Thông tin liên hệ
+- Logo và favicon
+
+### Bước 4: Chọn Modules
+- Chọn 9 modules cần thiết
+- Cấu hình từng module
+
+### Bước 5: Cài đặt
+- Tự động tạo code
+- Chạy seeders
+- Hoàn thành!
+
+## 🔧 Cài đặt thủ công (nếu cần)
+
 ```bash
-php artisan --version
+# Chạy migrations
+php artisan migrate
+
+# Chạy seeders
+php artisan db:seed
+
+# Tạo symbolic link cho storage
+php artisan storage:link
+
+# Clear cache
+php artisan optimize:clear
 ```
 
-### Kiểm tra Filament
-```bash
-php artisan filament:check
+## 🚀 Production
+
+### Cấu hình web server
+
+**Apache (.htaccess):**
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
 ```
 
-### Kiểm tra Database
-```bash
-php artisan migrate:status
+**Nginx:**
+```nginx
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
 ```
 
-## 🔧 Troubleshooting
+### Tối ưu production
 
-### Lỗi Composer trên Windows
 ```bash
-composer install --ignore-platform-reqs
+# Optimize autoloader
+composer install --optimize-autoloader --no-dev
+
+# Cache config
+php artisan config:cache
+
+# Cache routes
+php artisan route:cache
+
+# Cache views
+php artisan view:cache
+
+# Optimize
+php artisan optimize
 ```
 
-### Lỗi quyền Storage
-```bash
-# Windows
-icacls storage /grant Everyone:F /T
-icacls bootstrap/cache /grant Everyone:F /T
+## 🐛 Troubleshooting
 
-# Linux/Mac
-sudo chmod -R 775 storage bootstrap/cache
-sudo chown -R www-data:www-data storage bootstrap/cache
+### Lỗi thường gặp
+
+**1. Permission denied**
+```bash
+chmod -R 755 storage bootstrap/cache
 ```
 
-### Lỗi NPM
+**2. Key not found**
 ```bash
-# Xóa node_modules và cài lại
-rm -rf node_modules package-lock.json
+php artisan key:generate
+```
+
+**3. Database connection failed**
+- Kiểm tra thông tin database trong `.env`
+- Đảm bảo database đã được tạo
+
+**4. Node modules error**
+```bash
+rm -rf node_modules
 npm install
 ```
 
-## 📚 Bước tiếp theo
+### Logs
 
-- [Hướng dẫn phát triển](development.md)
-- [Cấu trúc dự án](guides/project-structure.md)
-- [Tài liệu API](api.md)
+Kiểm tra logs tại: `storage/logs/laravel.log`
+
+## 📞 Hỗ trợ
+
+- GitHub Issues: [Link repository]
+- Email: support@example.com
+- Documentation: [docs/](../README.md)

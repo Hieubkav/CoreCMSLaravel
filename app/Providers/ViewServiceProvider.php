@@ -8,6 +8,9 @@ use App\Models\Setting;
 use App\Models\CatPost;
 use App\Models\Post;
 use App\Models\Slider;
+use App\Models\ThemeSetting;
+use App\Models\WidgetSetting;
+use App\Models\WebDesign;
 use Illuminate\Support\Facades\Cache;
 
 class ViewServiceProvider extends ServiceProvider
@@ -49,9 +52,21 @@ class ViewServiceProvider extends ServiceProvider
             return Setting::where('status', 'active')->first();
         });
 
+        // Cache active theme for 1 hour
+        $activeTheme = Cache::remember('active_theme_data', 3600, function () {
+            return ThemeSetting::getActiveTheme();
+        });
+
+        // Cache web design settings for 1 hour
+        $webDesign = Cache::remember('web_design_settings', 3600, function () {
+            return WebDesign::getInstance();
+        });
+
         $view->with([
             'globalSettings' => $settings,
             'settings' => $settings, // Keep for backward compatibility
+            'activeTheme' => $activeTheme,
+            'webDesign' => $webDesign,
         ]);
     }
 
@@ -102,6 +117,11 @@ class ViewServiceProvider extends ServiceProvider
                     'total_posts' => Post::where('status', 'active')->count(),
                     'total_categories' => CatPost::where('status', 'active')->count(),
                 ],
+
+                // Widgets for different positions
+                'sidebarWidgets' => WidgetSetting::getForPosition('sidebar_right'),
+                'headerWidgets' => WidgetSetting::getForPosition('header'),
+                'footerWidgets' => WidgetSetting::getForPosition('footer'),
             ];
         });
 
@@ -115,6 +135,11 @@ class ViewServiceProvider extends ServiceProvider
     {
         Cache::forget('global_settings');
         Cache::forget('navigation_data');
+        Cache::forget('active_theme_data');
+        Cache::forget('web_design_settings');
+        Cache::forget('widgets_position_sidebar_right');
+        Cache::forget('widgets_position_header');
+        Cache::forget('widgets_position_footer');
     }
 
     /**
@@ -134,6 +159,17 @@ class ViewServiceProvider extends ServiceProvider
                 break;
             case 'sliders':
                 Cache::forget('navigation_data'); // Sliders are part of navigation data
+                break;
+            case 'theme':
+                Cache::forget('active_theme_data');
+                break;
+            case 'webdesign':
+                Cache::forget('web_design_settings');
+                break;
+            case 'widgets':
+                Cache::forget('widgets_position_sidebar_right');
+                Cache::forget('widgets_position_header');
+                Cache::forget('widgets_position_footer');
                 break;
             case 'all':
             default:

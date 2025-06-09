@@ -40,18 +40,22 @@
         <div class="border-t border-gray-200 pt-8">
             <p class="text-gray-600 mb-4">Hoặc bạn có thể thử:</p>
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="{{ route('courses.index') }}"
+                <a href="{{ route('storeFront') }}"
                    class="text-red-600 hover:text-red-700 underline">
-                    Khóa học
+                    Trang chủ
                 </a>
+                @if(Route::has('posts.index'))
                 <a href="{{ route('posts.index') }}"
                    class="text-red-600 hover:text-red-700 underline">
                     Bài viết
                 </a>
-                <a href="{{ route('posts.news') }}"
+                @endif
+                @if(Route::has('products.index'))
+                <a href="{{ route('products.index') }}"
                    class="text-red-600 hover:text-red-700 underline">
-                    Tin tức
+                    Sản phẩm
                 </a>
+                @endif
             </div>
         </div>
     </div>

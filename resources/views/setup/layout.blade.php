@@ -24,34 +24,93 @@
         </div>
 
         <!-- Progress Bar -->
-        <div class="max-w-4xl mx-auto mb-8">
-            <div class="flex items-center justify-between mb-4">
-                @php
-                    $steps = ['database', 'admin', 'website', 'configuration', 'sample-data'];
-                    $currentIndex = array_search($step ?? 'database', $steps);
-                @endphp
-                
-                @foreach($steps as $index => $stepName)
-                    <div class="flex items-center {{ $index < count($steps) - 1 ? 'flex-1' : '' }}">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-full 
-                            {{ $index <= $currentIndex ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-500' }}">
-                            {{ $index + 1 }}
-                        </div>
-                        @if($index < count($steps) - 1)
-                            <div class="flex-1 h-1 mx-4 
-                                {{ $index < $currentIndex ? 'bg-red-600' : 'bg-gray-200' }}">
-                            </div>
-                        @endif
+        <div class="max-w-6xl mx-auto mb-8">
+            @php
+                $allSteps = [
+                    'database' => ['title' => 'Database', 'group' => 'core'],
+                    'admin' => ['title' => 'Admin', 'group' => 'core'],
+                    'website' => ['title' => 'Website', 'group' => 'core'],
+                    'sample-data' => ['title' => 'Sample Data', 'group' => 'core'],
+                    'frontend-config' => ['title' => 'Frontend', 'group' => 'system'],
+                    'admin-config' => ['title' => 'Admin Panel', 'group' => 'system'],
+                    'module-user-roles' => ['title' => 'User Roles', 'group' => 'modules'],
+                    'module-blog' => ['title' => 'Blog', 'group' => 'modules'],
+                    'module-staff' => ['title' => 'Staff', 'group' => 'modules'],
+                    'module-content' => ['title' => 'Content', 'group' => 'modules'],
+                    'module-ecommerce' => ['title' => 'E-commerce', 'group' => 'modules'],
+                    'modules-summary' => ['title' => 'Summary', 'group' => 'final'],
+                    'installation' => ['title' => 'Install', 'group' => 'final'],
+                    'complete' => ['title' => 'Complete', 'group' => 'final']
+                ];
+
+                $stepKeys = array_keys($allSteps);
+                $currentStepKey = $step ?? 'database';
+                $currentIndex = array_search($currentStepKey, $stepKeys);
+                if ($currentIndex === false) $currentIndex = 0;
+
+                // Get actual step number from step data
+                $currentStepNumber = $allSteps[$currentStepKey]['step'] ?? ($currentIndex + 1);
+                $totalSteps = count($stepKeys);
+
+                // Group steps for better display
+                $groupedSteps = [
+                    'core' => array_filter($allSteps, fn($s) => $s['group'] === 'core'),
+                    'system' => array_filter($allSteps, fn($s) => $s['group'] === 'system'),
+                    'modules' => array_filter($allSteps, fn($s) => $s['group'] === 'modules'),
+                    'final' => array_filter($allSteps, fn($s) => $s['group'] === 'final')
+                ];
+            @endphp
+
+            <!-- Compact Progress Indicator -->
+            <div class="bg-white rounded-lg border p-4 mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="text-sm font-medium text-gray-700">
+                        Bước {{ $currentStepNumber }} / {{ $totalSteps }}
                     </div>
-                @endforeach
-            </div>
-            
-            <div class="flex justify-between text-sm text-gray-600">
-                <span>Database</span>
-                <span>Admin</span>
-                <span>Website</span>
-                <span>Cấu hình</span>
-                <span>Hoàn thành</span>
+                    <div class="text-sm text-gray-500">
+                        {{ $allSteps[$currentStepKey]['title'] ?? 'Unknown' }}
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-red-600 h-2 rounded-full transition-all duration-300"
+                         style="width: {{ (($currentStepNumber - 1) / ($totalSteps - 1)) * 100 }}%"></div>
+                </div>
+
+                <!-- Group Indicators -->
+                <div class="flex justify-between mt-3 text-xs">
+                    @foreach($groupedSteps as $groupName => $groupSteps)
+                        @php
+                            $groupStepNumbers = [];
+                            foreach ($groupSteps as $stepData) {
+                                if (isset($stepData['step'])) {
+                                    $groupStepNumbers[] = $stepData['step'];
+                                }
+                            }
+
+                            if (!empty($groupStepNumbers)) {
+                                $groupStartStep = min($groupStepNumbers);
+                                $groupEndStep = max($groupStepNumbers);
+                                $isGroupActive = $currentStepNumber >= $groupStartStep && $currentStepNumber <= $groupEndStep;
+                                $isGroupCompleted = $currentStepNumber > $groupEndStep;
+                            } else {
+                                $isGroupActive = false;
+                                $isGroupCompleted = false;
+                            }
+                        @endphp
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full mr-2
+                                {{ $isGroupCompleted ? 'bg-green-500' : ($isGroupActive ? 'bg-red-500' : 'bg-gray-300') }}">
+                            </div>
+                            <span class="text-gray-600 capitalize">
+                                {{ $groupName === 'core' ? 'Cơ bản' :
+                                   ($groupName === 'system' ? 'Hệ thống' :
+                                   ($groupName === 'modules' ? 'Modules' : 'Hoàn thành')) }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
 
@@ -121,9 +180,9 @@
         }
 
         // AJAX form submission helper
-        function submitStep(url, data, successCallback) {
+        function submitStep(url, data, successCallback, errorCallback) {
             showLoading();
-            
+
             axios.post(url, data)
                 .then(response => {
                     hideLoading();
@@ -134,15 +193,21 @@
                         }
                     } else {
                         showAlert(response.data.error || 'Có lỗi xảy ra', 'error');
+                        if (errorCallback) {
+                            errorCallback(response.data);
+                        }
                     }
                 })
                 .catch(error => {
                     hideLoading();
-                    const message = error.response?.data?.error || 
-                                  error.response?.data?.message || 
+                    const message = error.response?.data?.error ||
+                                  error.response?.data?.message ||
                                   'Có lỗi xảy ra khi xử lý yêu cầu';
                     showAlert(message, 'error');
                     console.error('Setup Error:', error);
+                    if (errorCallback) {
+                        errorCallback(error);
+                    }
                 });
         }
 

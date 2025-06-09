@@ -54,7 +54,7 @@
         </div>
 
         {{-- Form Section --}}
-        <x-filament-panels::form wire:submit="save">
+        <form wire:submit="save">
             {{ $this->form }}
 
             {{-- Save Section --}}
@@ -73,16 +73,15 @@
                     </p>
 
                     {{-- Save Button --}}
-                    <x-filament::button
+                    <button
                         type="submit"
-                        size="xl"
-                        class="bg-gradient-to-r from-red-600 via-pink-600 to-rose-600 hover:from-red-700 hover:via-pink-700 hover:to-rose-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                        class="inline-flex items-center bg-gradient-to-r from-red-600 via-pink-600 to-rose-600 hover:from-red-700 hover:via-pink-700 hover:to-rose-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                     >
                         <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
                         <span class="text-lg">Lưu cài đặt giao diện</span>
-                    </x-filament::button>
+                    </button>
 
                     {{-- Helper Text --}}
                     <div class="mt-4 flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
@@ -93,6 +92,6 @@
                     </div>
                 </div>
             </div>
-        </x-filament-panels::form>
+        </form>
     </div>
 </x-filament-panels::page>

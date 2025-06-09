@@ -1,134 +1,233 @@
-# Core Framework - Hệ thống Quản lý Nội dung Đa năng
+# Core Laravel Framework
 
-Framework tái sử dụng được xây dựng trên Laravel 10 với Filament Admin Panel, tích hợp Livewire và Tailwind CSS. Phù hợp cho các dự án website, khóa học trực tuyến, blog và CMS.
+🚀 **Framework Laravel đa năng với Setup Wizard tự động**
 
-## 🚀 Tính năng chính
+## 📋 Tổng quan
 
-- **Setup Wizard**: Cài đặt dự án tự động với giao diện thân thiện
-- **Admin Panel**: Quản trị toàn diện với Filament 3.x
-- **Content Management**: Quản lý bài viết, khóa học, học viên
-- **Responsive Design**: Giao diện tối ưu cho mọi thiết bị
-- **SEO Optimized**: Tối ưu hóa SEO tự động
-- **Real-time Updates**: Cập nhật thời gian thực với Livewire
-- **Image Optimization**: Tự động chuyển đổi ảnh sang WebP
-- **Modular Architecture**: Dễ dàng mở rộng và tùy chỉnh
-- **100% Clean**: Hoàn toàn tổng quát, không còn dấu ấn dự án cũ
+Core Laravel Framework là một framework hoàn chỉnh được xây dựng trên Laravel, cung cấp:
 
-## 📋 Yêu cầu hệ thống
+- ✅ **Setup Wizard tự động** - Cài đặt website trong 5 phút
+- ✅ **9 modules tích hợp** - Chọn tính năng cần thiết
+- ✅ **Admin panel hoàn chỉnh** - Quản trị dễ dàng
+- ✅ **Responsive design** - Hoạt động trên mọi thiết bị
+- ✅ **Đa ngôn ngữ** - Hỗ trợ 10 ngôn ngữ
+- ✅ **SEO tối ưu** - Thân thiện với công cụ tìm kiếm
 
-- PHP >= 8.1
-- Composer
-- Node.js & NPM
-- MySQL/PostgreSQL
-- Laravel 10.x
+## 🎯 Phù hợp cho
 
-## 🛠️ Cài đặt nhanh
+- 🏢 **Website doanh nghiệp** - Giới thiệu công ty, dịch vụ
+- 🛒 **Cửa hàng online** - Bán hàng trực tuyến
+- 📰 **Website tin tức** - Blog, báo điện tử
+- 🎓 **Nền tảng học tập** - Khóa học online
+- 📄 **Landing pages** - Trang đích marketing
 
-### Phương pháp 1: Setup Wizard (Khuyến nghị)
+## ⚡ Cài đặt nhanh
+
+### 1. Tải về và cài đặt
 
 ```bash
-# Clone repository
-git clone [repository-url] my-project
-cd my-project
-
-# Cài đặt dependencies
+git clone https://github.com/your-repo/core-laravel-framework.git
+cd core-laravel-framework
 composer install
 npm install
-
-# Cấu hình environment
-cp .env.example .env
-php artisan key:generate
-
-# Cấu hình database trong .env
-# DB_DATABASE=your_database_name
-# DB_USERNAME=your_username
-# DB_PASSWORD=your_password
-
-# Build assets
-npm run build
-
-# Chạy server và truy cập setup wizard
-php artisan serve
-# Truy cập: http://localhost:8000/setup
 ```
 
-### Phương pháp 2: Manual Setup
+### 2. Cấu hình môi trường
 
 ```bash
-# Sau khi cài đặt dependencies và cấu hình .env
-php artisan migrate:fresh --seed
-php artisan storage:link
-php artisan optimize
+cp .env.example .env
+php artisan key:generate
 ```
 
-## 📚 Tài liệu
+### 3. Chạy Setup Wizard
 
-Xem thêm tài liệu chi tiết trong thư mục `/docs`:
-
-### 🚀 Getting Started
-- [Hướng dẫn Core Framework](docs/CORE_FRAMEWORK_GUIDE.md)
-- [Hướng dẫn Setup](docs/SETUP_GUIDE.md)
-
-### 🔧 Customization
-- [Tùy chỉnh Routes](docs/ROUTES_CUSTOMIZATION.md)
-- [Cấu hình Environment](docs/ENV_CUSTOMIZATION.md)
-
-### 💻 Development
-- [Laravel Actions Usage](docs/laravel-actions-usage.md)
-- [Actions Refactor Summary](docs/ACTIONS_REFACTOR_SUMMARY.md)
-- [Complete Cleanup Summary](docs/CLEANUP_SUMMARY.md)
-
-## 🏗️ Cấu trúc dự án
-
-```
-core-framework/
-├── app/                    # Mã nguồn ứng dụng
-│   ├── Models/            # Models (Course, Post, Student, etc.)
-│   ├── Http/Controllers/  # Controllers
-│   ├── Livewire/         # Livewire components
-│   └── Filament/         # Admin panel resources
-├── docs/                   # Tài liệu dự án
-├── resources/views/        # Blade templates
-│   ├── setup/            # Setup wizard views
-│   └── shop/             # Frontend views
-├── database/seeders/       # Database seeders
-└── routes/                 # Route definitions
+```bash
+php artisan serve
 ```
 
-## 🎯 Sử dụng cho dự án mới
+Truy cập: `http://localhost:8000/setup`
 
-1. **Clone và cài đặt**: Sử dụng setup wizard để cài đặt nhanh
-2. **Tùy chỉnh Routes**: Thay đổi URL slugs theo ngôn ngữ dự án
-3. **Cấu hình Environment**: Điều chỉnh .env theo loại dự án
-4. **Tùy chỉnh giao diện**: Thay đổi logo, màu sắc, nội dung
-5. **Mở rộng**: Thêm models và features mới dễ dàng
-6. **Deploy**: Triển khai lên production với hướng dẫn chi tiết
+### 4. Hoàn thành trong 5 phút! 🎉
 
-### 📝 Hướng dẫn tùy chỉnh nhanh
+## 📦 9 Modules có sẵn
 
-#### Thay đổi ngôn ngữ URLs:
-```php
-// Tiếng Việt (mặc định)
-/khoa-hoc, /bai-viet, /hoc-vien
+### ✅ **System Configuration**
+- Cấu hình màu sắc, font chữ
+- Thiết lập giao diện tổng thể
 
-// Tiếng Anh
-/courses, /posts, /students
+### ✅ **User Roles & Permissions**
+- Phân quyền người dùng
+- Quản lý vai trò
 
-// Tiếng Pháp
-/formations, /articles, /etudiants
-```
+### ✅ **Blog/Posts**
+- Hệ thống tin tức
+- Quản lý bài viết, SEO
 
-#### Thay đổi tên dự án:
+### ✅ **Staff Management**
+- Quản lý nhân viên
+- Hồ sơ cá nhân
+
+### ✅ **Content Sections**
+- Gallery ảnh
+- FAQ, Testimonial
+- Dịch vụ
+
+### ✅ **Layout Components**
+- Menu động
+- Header, Footer
+- Sidebar
+
+### ✅ **E-commerce**
+- Sản phẩm, đơn hàng
+- Giỏ hàng, thanh toán
+- Quản lý kho
+
+### ✅ **Settings Expansion**
+- Thông tin website
+- Cấu hình SEO
+- Liên hệ
+
+### ✅ **Web Design Management**
+- Tùy chỉnh giao diện
+- Quản lý theme
+- CSS tự động
+
+## 🎨 Tính năng nổi bật
+
+### 🚀 **Setup Wizard thông minh**
+- Chọn modules cần thiết
+- Cấu hình tự động
+- Tạo dữ liệu mẫu
+- Hoàn thành trong 5 phút
+
+### 🎯 **Admin Panel mạnh mẽ**
+- Giao diện Filament hiện đại
+- Quản lý dễ dàng
+- Responsive design
+- Tiếng Việt hoàn toàn
+
+### 🌐 **Đa ngôn ngữ**
+- 10 ngôn ngữ hỗ trợ
+- Dễ dàng thêm ngôn ngữ mới
+- Quản lý bản dịch
+
+### 📊 **Analytics tích hợp**
+- Theo dõi lượt truy cập
+- Phân tích hành vi người dùng
+- Báo cáo chi tiết
+
+### 🔍 **Tìm kiếm thông minh**
+- Tìm kiếm nâng cao
+- Gợi ý tự động
+- Phân tích từ khóa
+
+### 🤖 **Tự động hóa**
+- Workflow tự động
+- Email marketing
+- Backup định kỳ
+
+## 🛠️ Yêu cầu hệ thống
+
+- **PHP:** 8.1 trở lên
+- **Laravel:** 10.x
+- **Database:** MySQL 5.7+ hoặc PostgreSQL
+- **Web server:** Apache hoặc Nginx
+- **Node.js:** 16+ (cho build assets)
+
+## 📚 Hướng dẫn sử dụng
+
+### 🎯 **Bước 1: Setup Wizard**
+1. Truy cập `/setup`
+2. Chọn modules cần thiết
+3. Cấu hình cơ bản
+4. Chờ cài đặt tự động
+5. Hoàn thành!
+
+### 🎨 **Bước 2: Tùy chỉnh giao diện**
+1. Vào Admin Panel `/admin`
+2. Chọn **Web Design Management**
+3. Tùy chỉnh màu sắc, font chữ
+4. Preview và áp dụng
+
+### 📝 **Bước 3: Thêm nội dung**
+1. Quản lý **Posts** - Thêm tin tức
+2. Quản lý **Products** - Thêm sản phẩm
+3. Quản lý **Staff** - Thêm nhân viên
+4. Cấu hình **Settings** - Thông tin website
+
+### 🚀 **Bước 4: Go Live**
+1. Cấu hình domain
+2. Setup SSL
+3. Tối ưu performance
+4. Launch website!
+
+## 🔧 Cấu hình nâng cao
+
+### Database
 ```env
-# .env
-APP_NAME="My Project Name"
-DB_DATABASE=my_project_db
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=corelaravel
+DB_USERNAME=root
+DB_PASSWORD=
 ```
 
-## 🤝 Đóng góp
+### Email
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-password
+```
 
-Vui lòng đọc [CONTRIBUTING.md](docs/CONTRIBUTING.md) để biết thêm chi tiết.
+### Cache
+```env
+CACHE_DRIVER=redis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
+
+## 🆘 Hỗ trợ
+
+### 📖 **Documentation**
+- [Hướng dẫn cài đặt](docs/installation.md)
+- [Hướng dẫn sử dụng](docs/usage.md)
+- [API Documentation](docs/api.md)
+- [Troubleshooting](docs/troubleshooting.md)
+
+### 🐛 **Báo lỗi**
+- Tạo issue trên GitHub
+- Email: support@example.com
+
+### 💬 **Cộng đồng**
+- Facebook Group: [Link group]
+- Telegram: [Link channel]
 
 ## 📄 License
 
-Dự án này được cấp phép theo MIT License.
+MIT License - Sử dụng tự do cho mọi mục đích.
+
+## 🙏 Credits
+
+- **Laravel Framework** - Taylor Otwell
+- **Filament Admin** - Dan Harrin
+- **Tailwind CSS** - Adam Wathan
+- **Font Awesome** - Dave Gandy
+
+---
+
+## 🎉 Bắt đầu ngay!
+
+```bash
+git clone https://github.com/your-repo/core-laravel-framework.git
+cd core-laravel-framework
+composer install
+php artisan serve
+```
+
+Truy cập: `http://localhost:8000/setup`
+
+**🚀 Tạo website chuyên nghiệp trong 5 phút!**

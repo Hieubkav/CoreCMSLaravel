@@ -16,12 +16,13 @@
     <meta property="og:description" content="@yield('description', isset($settings) && $settings ? $settings->seo_description : 'Core Framework - Build Better Applications')">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="{{ isset($settings) && $settings && $settings->og_image_link ? asset('storage/' . $settings->og_image_link) : asset('images/logo.png') }}"
+    <!-- Default JSON-LD Structured Data -->
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "Core Framework",
-  "description": "Core Framework - Build Better Applications",
+  "name": "{{ isset($settings) && $settings ? $settings->site_name : 'Core Framework' }}",
+  "description": "{{ isset($settings) && $settings ? $settings->seo_description : 'Core Framework - Build Better Applications' }}",
   "url": "{{ url('/') }}"
 }
 </script>
@@ -479,8 +480,8 @@
     <!-- Action Buttons -->
     @include('components.public.speedial')
 
-    <!-- Notifications -->
-    @livewire('notifications')
+    <!-- Toast Notifications -->
+    @livewire('toast-notifications')
 
     <!-- Critical Scripts -->
     @filamentScripts

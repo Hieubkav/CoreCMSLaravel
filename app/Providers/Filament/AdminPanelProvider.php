@@ -20,7 +20,8 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use App\Models\Setting;
+use App\Generated\Models\WebsiteSettings;
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -31,8 +32,8 @@ class AdminPanelProvider extends PanelProvider
 
     public function panel(Panel $panel): Panel
     {
-        // Get settings from database
-        $settings = Setting::where('status', 'active')->first();
+        // Get settings from database (temporarily disabled until table is created)
+        $settings = null; // WebsiteSettings::getActive();
 
         // Xác định brand name
         $brandName = $this->getBrandName($settings);
@@ -53,7 +54,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName($brandName)
             ->brandLogo($brandLogo)
             ->favicon($favicon)
-            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
+            ->resources($this->getFilteredResources())
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages([
                 // \App\Filament\Admin\Pages\Dashboard::class,
@@ -127,6 +128,56 @@ class AdminPanelProvider extends PanelProvider
     }
 
     /**
+     * Lấy danh sách resources (ưu tiên Generated resources)
+     */
+    private function getFilteredResources(): array
+    {
+        $resources = [];
+
+        // 1. Load Generated resources (từ modules đã được enable)
+        $generatedPath = app_path('Generated/Filament/Resources');
+        if (is_dir($generatedPath)) {
+            $generatedFiles = glob($generatedPath . '/*Resource.php');
+            foreach ($generatedFiles as $file) {
+                $className = 'App\\Generated\\Filament\\Resources\\' . basename($file, '.php');
+                if (class_exists($className)) {
+                    $resources[] = $className;
+                }
+            }
+        }
+
+        // 2. Load core resources (luôn hiển thị)
+        $coreResources = [
+            'App\\Generated\\Filament\\Resources\\SystemConfigurationResource',
+            'App\\Generated\\Filament\\Resources\\WebsiteSettingsResource',
+            'App\\Generated\\Filament\\Resources\\MenuItemResource',
+            'App\\Filament\\Admin\\Resources\\UserResource',
+        ];
+
+        foreach ($coreResources as $resourceClass) {
+            if (class_exists($resourceClass)) {
+                $resources[] = $resourceClass;
+            }
+        }
+
+        // 3. Load remaining resources từ Admin/Resources (nếu không có Generated)
+        if (empty($resources)) {
+            $adminPath = app_path('Filament/Admin/Resources');
+            if (is_dir($adminPath)) {
+                $adminFiles = glob($adminPath . '/*Resource.php');
+                foreach ($adminFiles as $file) {
+                    $className = 'App\\Filament\\Admin\\Resources\\' . basename($file, '.php');
+                    if (class_exists($className)) {
+                        $resources[] = $className;
+                    }
+                }
+            }
+        }
+
+        return array_unique($resources);
+    }
+
+    /**
      * Lấy brand name từ settings hoặc fallback
      */
     private function getBrandName($settings): string
@@ -145,8 +196,8 @@ class AdminPanelProvider extends PanelProvider
             return null; // Chỉ hiển thị text
         }
 
-        return $settings && $settings->logo_link && Storage::disk('public')->exists($settings->logo_link)
-            ? asset('storage/' . $settings->logo_link)
+        return $settings && $settings->site_logo && Storage::disk('public')->exists($settings->site_logo)
+            ? asset('storage/' . $settings->site_logo)
             : asset('images/logo.png');
     }
 
@@ -155,8 +206,8 @@ class AdminPanelProvider extends PanelProvider
      */
     private function getFavicon($settings): string
     {
-        return $settings && $settings->favicon_link && Storage::disk('public')->exists($settings->favicon_link)
-            ? asset('storage/' . $settings->favicon_link)
+        return $settings && $settings->site_favicon && Storage::disk('public')->exists($settings->site_favicon)
+            ? asset('storage/' . $settings->site_favicon)
             : asset('favicon.ico');
     }
 }

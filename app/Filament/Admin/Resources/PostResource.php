@@ -8,13 +8,14 @@ use App\Filament\Admin\Resources\PostCategoryResource;
 use App\Models\Post;
 
 
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -27,7 +28,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
-
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class PostResource extends Resource
@@ -98,6 +99,18 @@ class PostResource extends Resource
                                             ->maxLength(255),
                                     ]),
 
+                                Select::make('post_type')
+                                    ->label('Loại bài viết')
+                                    ->options(Post::getPostTypeOptions())
+                                    ->default('blog')
+                                    ->required(),
+
+                                TextInput::make('author_name')
+                                    ->label('Tác giả')
+                                    ->maxLength(255)
+                                    ->default(auth()->user()?->name)
+                                    ->helperText('Để trống để sử dụng tên người tạo'),
+
                                 FileUpload::make('thumbnail')
                                     ->label('Hình đại diện')
                                     ->image()
@@ -126,6 +139,16 @@ class PostResource extends Resource
                                     ->helperText('Ảnh sẽ được tự động chuyển sang WebP với tên SEO-friendly. Kích thước tối ưu: 1200x630px')
                                     ->imagePreviewHeight('200'),
 
+                                DateTimePicker::make('published_at')
+                                    ->label('Ngày xuất bản')
+                                    ->default(now())
+                                    ->helperText('Bài viết sẽ hiển thị từ thời điểm này'),
+
+                                Toggle::make('is_featured')
+                                    ->label('Bài viết nổi bật')
+                                    ->default(false)
+                                    ->helperText('Hiển thị trong danh sách bài viết nổi bật'),
+
                                 TextInput::make('order')
                                     ->label('Thứ tự')
                                     ->numeric()
@@ -144,11 +167,23 @@ class PostResource extends Resource
 
                         Tabs\Tab::make('Nội dung & SEO')
                             ->schema([
+                                Textarea::make('excerpt')
+                                    ->label('Tóm tắt')
+                                    ->rows(3)
+                                    ->maxLength(300)
+                                    ->helperText('Mô tả ngắn gọn về bài viết (để trống để tự động tạo)')
+                                    ->columnSpanFull(),
+
                                 RichEditor::make('content')
                                     ->label('Nội dung chi tiết')
                                     ->fileAttachmentsDisk('public')
                                     ->fileAttachmentsDirectory('posts')
                                     ->required()
+                                    ->columnSpanFull(),
+
+                                TagsInput::make('tags')
+                                    ->label('Thẻ tag')
+                                    ->helperText('Nhập các từ khóa liên quan, nhấn Enter để thêm')
                                     ->columnSpanFull(),
 
                                 Section::make('SEO & Tối ưu hóa')
@@ -198,15 +233,33 @@ class PostResource extends Resource
                     ->sortable()
                     ->weight('bold')
                     ->description(fn ($record): string =>
-                        $record->category ? "Danh mục: {$record->category->name}" : 'Chưa phân loại'
+                        ($record->category ? "Danh mục: {$record->category->name}" : 'Chưa phân loại') .
+                        ($record->author_name ? " • Tác giả: {$record->author_name}" : '')
                     ),
+
+                TextColumn::make('post_type')
+                    ->label('Loại')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'blog' => 'success',
+                        'news' => 'info',
+                        'page' => 'warning',
+                        'policy' => 'gray',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => Post::getPostTypeOptions()[$state] ?? $state),
+
+                ToggleColumn::make('is_featured')
+                    ->label('Nổi bật')
+                    ->sortable(),
 
                 TextColumn::make('category.name')
                     ->label('Danh mục')
                     ->searchable()
                     ->sortable()
                     ->badge()
-                    ->color('info'),
+                    ->color('info')
+                    ->toggleable(),
 
                 TextColumn::make('status')
                     ->label('Trạng thái')
@@ -233,12 +286,41 @@ class PostResource extends Resource
                     ->relationship('category', 'name')
                     ->label('Danh mục'),
 
+                Tables\Filters\SelectFilter::make('post_type')
+                    ->label('Loại bài viết')
+                    ->options(Post::getPostTypeOptions()),
+
+                Tables\Filters\TernaryFilter::make('is_featured')
+                    ->label('Bài viết nổi bật')
+                    ->placeholder('Tất cả')
+                    ->trueLabel('Nổi bật')
+                    ->falseLabel('Thường'),
+
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Trạng thái')
                     ->options([
                         'active' => 'Hiển thị',
                         'inactive' => 'Ẩn',
                     ]),
+
+                Tables\Filters\Filter::make('published_at')
+                    ->form([
+                        DateTimePicker::make('published_from')
+                            ->label('Từ ngày'),
+                        DateTimePicker::make('published_until')
+                            ->label('Đến ngày'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['published_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['published_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '<=', $date),
+                            );
+                    }),
             ])
             ->actions([
                 Tables\Actions\Action::make('view_frontend')

@@ -29,6 +29,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SystemConfigController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,7 +44,7 @@ Route::controller(MainController::class)->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Setup System Routes  
+| Setup System Routes
 |--------------------------------------------------------------------------
 | Setup wizard for new projects - can be removed after setup is complete
 */
@@ -52,6 +53,20 @@ Route::prefix('setup')->name('setup.')->group(function () {
     Route::get('/step/{step}', [SetupController::class, 'step'])->name('step');
     Route::post('/process/{step}', [SetupController::class, 'process'])->name('process');
     Route::post('/complete', [SetupController::class, 'complete'])->name('complete');
+    Route::post('/reset', [SetupController::class, 'reset'])->name('reset');
+});
+
+/*
+|--------------------------------------------------------------------------
+| System Configuration Routes (Local Environment Only)
+|--------------------------------------------------------------------------
+| System configuration interface - only accessible in local environment
+*/
+Route::prefix('system-config')->name('system-config.')->group(function () {
+    Route::get('/', [SystemConfigController::class, 'index'])->name('index');
+    Route::post('/', [SystemConfigController::class, 'store'])->name('store');
+    Route::post('/reset', [SystemConfigController::class, 'reset'])->name('reset');
+    Route::get('/css-variables', [SystemConfigController::class, 'getCssVariables'])->name('css-variables');
 });
 
 /*
@@ -170,6 +185,112 @@ if (app()->environment(['local', 'staging'])) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     })->name('dev.clear-cache');
+
+    // System Configuration (Local only)
+    Route::get('/system-config', function () {
+        $activeConfig = \App\Generated\Models\SystemConfiguration::getActive();
+
+        return response()->json([
+            'active_config' => $activeConfig,
+            'css_variables' => $activeConfig ? $activeConfig->getCssVariables() : [],
+            'analytics' => $activeConfig ? $activeConfig->getAnalyticsConfig() : [],
+            'error_pages' => $activeConfig ? $activeConfig->getErrorPagesConfig() : [],
+        ]);
+    })->name('dev.system-config');
+
+    // Website Settings (Local only) - Temporarily disabled until table is created
+    Route::get('/website-settings', function () {
+        // $activeSettings = \App\Generated\Models\WebsiteSettings::getActive();
+
+        return response()->json([
+            'message' => 'Website settings module created but table not yet migrated',
+            'status' => 'pending_migration',
+            'active_settings' => null,
+            'contact_info' => [],
+            'social_links' => [],
+            'analytics_config' => [],
+            'seo_config' => [],
+            'localization' => [],
+            'performance' => [],
+        ]);
+    })->name('dev.website-settings');
+
+    // Web Design (Local only) - Temporarily disabled until table is created
+    Route::get('/web-design', function () {
+        // $activeDesign = \App\Generated\Models\WebDesign::getActive();
+
+        return response()->json([
+            'message' => 'Web design module created but table not yet migrated',
+            'status' => 'pending_migration',
+            'active_design' => null,
+            'css_variables' => [],
+            'theme_info' => [],
+            'component_styles' => [],
+        ]);
+    })->name('dev.web-design');
+
+    // Design Preview (Local only)
+    Route::get('/design/preview/{id}', function ($id) {
+        return response()->json([
+            'message' => 'Design preview will be available after migration',
+            'design_id' => $id,
+            'status' => 'pending_migration',
+        ]);
+    })->name('design.preview');
+
+    // Advanced Features (Local only) - Temporarily disabled until tables are created
+    Route::prefix('advanced')->group(function () {
+        // Multi-language API
+        Route::get('/languages', function () {
+            return response()->json([
+                'message' => 'Multi-language module created but table not yet migrated',
+                'status' => 'pending_migration',
+                'supported_languages' => [
+                    'vi' => ['name' => 'Tiếng Việt', 'flag' => '🇻🇳'],
+                    'en' => ['name' => 'English', 'flag' => '🇺🇸'],
+                ],
+                'current_language' => 'vi',
+                'translations' => [],
+            ]);
+        })->name('dev.languages');
+
+        // Advanced Search API
+        Route::get('/search', function () {
+            return response()->json([
+                'message' => 'Advanced search module created but table not yet migrated',
+                'status' => 'pending_migration',
+                'search_types' => ['general', 'posts', 'products'],
+                'analytics' => [],
+                'suggestions' => [],
+            ]);
+        })->name('dev.search');
+
+        // Analytics API
+        Route::get('/analytics', function () {
+            return response()->json([
+                'message' => 'Analytics module created but table not yet migrated',
+                'status' => 'pending_migration',
+                'dashboard_data' => [],
+                'metrics' => [],
+                'real_time' => [],
+            ]);
+        })->name('dev.analytics');
+
+        // Automation API
+        Route::get('/automation', function () {
+            return response()->json([
+                'message' => 'Automation module created but table not yet migrated',
+                'status' => 'pending_migration',
+                'workflows' => [],
+                'statistics' => [],
+                'ready_for_execution' => [],
+            ]);
+        })->name('dev.automation');
+    });
+
+
+
+
 }
 
 /*

@@ -13,13 +13,7 @@ class ListSliders extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->label('Tạo slider mới'),
+            Actions\CreateAction::make(),
         ];
-    }
-    
-    public function getTitle(): string
-    {
-        return 'Quản lý Slider';
     }
 }

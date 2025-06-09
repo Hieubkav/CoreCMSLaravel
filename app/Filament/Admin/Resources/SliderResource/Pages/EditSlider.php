@@ -13,23 +13,7 @@ class EditSlider extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
-                ->label('Xóa'),
+            Actions\DeleteAction::make(),
         ];
-    }
-    
-    public function getTitle(): string
-    {
-        return 'Chỉnh sửa Slider';
-    }
-    
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
-    }
-    
-    protected function getSavedNotificationTitle(): ?string
-    {
-        return 'Slider đã được cập nhật thành công';
     }
 }

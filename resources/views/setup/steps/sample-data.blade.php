@@ -133,16 +133,16 @@
 <!-- Navigation -->
 <div id="navigation-section" class="hidden border-t pt-6 mt-6">
     <div class="flex justify-between">
-        <a href="{{ route('setup.step', 'configuration') }}"
+        <a href="{{ route('setup.step', 'modules-summary') }}"
            class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
             <i class="fas fa-arrow-left mr-2"></i>
             Quay lại
         </a>
-        
-        <button onclick="completeSetup()"
-                class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
-            <i class="fas fa-check mr-2"></i>
-            Hoàn thành cài đặt
+
+        <button onclick="goToNextStep('installation')"
+                class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+            Tiếp theo
+            <i class="fas fa-arrow-right ml-2"></i>
         </button>
     </div>
 </div>
@@ -171,9 +171,14 @@ function processSampleData() {
     }, (response) => {
         document.getElementById('processing-status').classList.add('hidden');
         document.getElementById('navigation-section').classList.remove('hidden');
-        
+
         // Show completion message
         showCompletionMessage(importSample);
+
+        // Auto proceed to next step after 2 seconds
+        setTimeout(() => {
+            goToNextStep('installation');
+        }, 2000);
     });
 }
 

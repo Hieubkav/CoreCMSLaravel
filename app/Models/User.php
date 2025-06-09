@@ -16,11 +16,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // if ($panel->getId() === 'dashboard') {
-        //     return $this->hasRole('admin') && $this->hasVerifiedEmail();
-        // }
-
-        return true;
+        return true; // Allow all users for now, will be restricted after setup
     }
 
     /**
@@ -64,6 +60,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        // Simple check by email for now
+        return in_array($this->email, ['admin@example.com', 'admin@corelaravel.com']);
     }
 }

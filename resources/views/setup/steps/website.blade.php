@@ -136,7 +136,7 @@
             Quay lại
         </a>
         
-        <button onclick="goToNextStep('configuration')"
+        <button onclick="goToNextStep('sample-data')"
                 class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
             Tiếp theo
             <i class="fas fa-arrow-right ml-2"></i>
@@ -168,7 +168,7 @@ function configureWebsite(event) {
         
         // Auto proceed to next step after 2 seconds
         setTimeout(() => {
-            goToNextStep('configuration');
+            goToNextStep('sample-data');
         }, 2000);
     });
 }
