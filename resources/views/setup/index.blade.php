@@ -542,6 +542,47 @@
             </div>
         </div>
 
+        <!-- Development Reset Section (Always visible in local) -->
+        @if(app()->environment('local'))
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-tools text-yellow-600 text-xl"></i>
+                </div>
+                <div class="ml-4 flex-1">
+                    <h3 class="text-lg font-semibold text-yellow-800 mb-2">
+                        Development Tools
+                    </h3>
+                    <p class="text-yellow-700 text-sm mb-4">
+                        Các công cụ hỗ trợ development và testing. Chỉ hiển thị trong môi trường local.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="showResetConfirmation()"
+                                class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+                            <i class="fas fa-undo mr-2"></i>
+                            Reset Hệ thống
+                        </button>
+                        <a href="{{ route('filament.admin.pages.dashboard') }}"
+                           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-user-shield mr-2"></i>
+                            Admin Panel
+                        </a>
+                        <a href="{{ route('storeFront') }}"
+                           class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-home mr-2"></i>
+                            Xem Website
+                        </a>
+                        <button onclick="clearCache()"
+                                class="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors">
+                            <i class="fas fa-broom mr-2"></i>
+                            Clear Cache
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- Footer -->
         <div class="text-center mt-12 pt-8 border-t border-gray-200">
             <p class="text-gray-500">
@@ -667,6 +708,28 @@
             } catch (error) {
                 hideLoading();
                 alert('Có lỗi xảy ra: ' + error.message);
+            }
+        }
+
+        // Clear cache function
+        async function clearCache() {
+            try {
+                const response = await fetch('{{ route("dev.clear-cache") }}', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.message) {
+                    alert('✅ ' + result.message);
+                } else {
+                    alert('❌ Lỗi: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('❌ Có lỗi xảy ra: ' + error.message);
             }
         }
 

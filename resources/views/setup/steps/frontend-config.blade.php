@@ -181,6 +181,29 @@
             </div>
         </div>
 
+        <!-- Favicon Info -->
+        <div class="border border-gray-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-image text-blue-600 mr-2"></i>
+                Favicon Website
+            </h3>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex items-start">
+                    <i class="fas fa-info-circle text-blue-600 mt-0.5 mr-2"></i>
+                    <div class="text-sm text-blue-800">
+                        <p class="font-medium mb-1">Favicon tự động:</p>
+                        <ul class="text-xs space-y-1">
+                            <li>• Hệ thống sẽ tự động sử dụng <code>public/images/default_logo.ico</code></li>
+                            <li>• Favicon sẽ được copy vào <code>public/favicon.ico</code> để browser detect</li>
+                            <li>• Có thể thay đổi favicon sau trong admin panel</li>
+                            <li>• Kích thước chuẩn: 32x32px hoặc 16x16px</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Error Pages Configuration -->
         <div class="border border-gray-200 rounded-lg p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -239,27 +262,27 @@
 <script>
 function saveFrontendConfig(event) {
     event.preventDefault();
-    
+
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
-    
+
     // Handle radio buttons
     data.theme_mode = document.querySelector('input[name="theme_mode"]:checked').value;
     data.design_style = document.querySelector('input[name="design_style"]:checked').value;
     data.icon_system = document.querySelector('input[name="icon_system"]:checked').value;
-    
+
     // Handle error pages checkboxes
     const errorPages = [];
     document.querySelectorAll('input[name="error_pages[]"]:checked').forEach(checkbox => {
         errorPages.push(checkbox.value);
     });
     data.error_pages = errorPages;
-    
+
     showLoading('Đang lưu cấu hình Frontend...');
-    
+
     submitStep('{{ route('setup.process', 'frontend-config') }}', data, (response) => {
         document.getElementById('navigation-section').classList.remove('hidden');
-        
+
         // Auto proceed to next step after 2 seconds
         setTimeout(() => {
             goToNextStep('admin-config');

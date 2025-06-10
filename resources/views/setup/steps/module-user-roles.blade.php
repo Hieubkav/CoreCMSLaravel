@@ -37,11 +37,13 @@
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <h4 class="font-semibold text-blue-800 mb-2">Tính năng của module:</h4>
                     <ul class="text-blue-700 text-sm space-y-1">
-                        <li>• <strong>Spatie Laravel Permission:</strong> Package quản lý quyền hạn mạnh mẽ</li>
+                        <li>• <strong>Filament Shield:</strong> Package quản lý quyền hạn chuyên nghiệp cho Filament</li>
+                        <li>• <strong>Spatie Laravel Permission:</strong> Backend mạnh mẽ cho hệ thống phân quyền</li>
                         <li>• <strong>Roles mặc định:</strong> Super Admin, Admin, Editor, Viewer</li>
                         <li>• <strong>Permissions tự động:</strong> Tạo quyền cho tất cả Filament resources</li>
-                        <li>• <strong>Filament Plugin:</strong> Giao diện quản lý roles & permissions</li>
-                        <li>• <strong>Middleware:</strong> Bảo vệ routes theo vai trò</li>
+                        <li>• <strong>Giao diện quản lý:</strong> Role & Permission resources trong admin panel</li>
+                        <li>• <strong>User Management:</strong> Quản lý người dùng với phân quyền</li>
+                        <li>• <strong>Middleware bảo vệ:</strong> Tự động bảo vệ routes theo vai trò</li>
                     </ul>
                 </div>
 
@@ -89,8 +91,15 @@
                             <code class="text-sm">spatie/laravel-permission</code>
                         </div>
                         <div class="flex items-center p-2 bg-gray-50 rounded">
-                            <i class="fas fa-puzzle-piece text-orange-500 mr-3"></i>
-                            <code class="text-sm">filament/spatie-laravel-permissions-plugin</code>
+                            <i class="fas fa-shield-alt text-blue-500 mr-3"></i>
+                            <code class="text-sm">bezhansalleh/filament-shield</code>
+                        </div>
+                        <div class="flex items-center p-2 bg-green-50 rounded border border-green-200">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <div class="text-sm">
+                                <div class="font-medium text-green-800">Filament Shield</div>
+                                <div class="text-green-700">Package uy tín nhất trong cộng đồng Laravel Filament</div>
+                            </div>
                         </div>
                     </div>
                 </div>

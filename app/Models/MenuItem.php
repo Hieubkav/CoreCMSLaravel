@@ -12,17 +12,27 @@ class MenuItem extends Model
 
     protected $fillable = [
         'parent_id',
-        'label',
-        'menu_type',
-        'link',
+        'title',
+        'slug',
+        'url',
+        'route_name',
         'icon',
-        'status',
+        'description',
+        'target',
+        'css_class',
+        'menu_location',
+        'is_active',
+        'is_featured',
         'order',
+        'meta_title',
+        'meta_description',
     ];
 
     protected $casts = [
         'parent_id' => 'integer',
         'order' => 'integer',
+        'is_active' => 'boolean',
+        'is_featured' => 'boolean',
     ];
 
     /**
@@ -46,7 +56,7 @@ class MenuItem extends Model
      */
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->where('is_active', true);
     }
 
     /**
@@ -54,7 +64,7 @@ class MenuItem extends Model
      */
     public function scopeOrdered($query)
     {
-        return $query->orderBy('order')->orderBy('label');
+        return $query->orderBy('order')->orderBy('title');
     }
 
     /**
@@ -85,42 +95,24 @@ class MenuItem extends Model
     /**
      * Lấy URL thực tế của menu item
      */
-    public function getUrlAttribute(): string
+    public function getResolvedUrlAttribute(): string
     {
         try {
-            switch ($this->menu_type) {
-                case 'home':
-                    // Use storeFront route as the main homepage route
-                    return route('storeFront');
-
-                case 'all_posts':
-                    // Check if posts.index route exists
-                    if (Route::has('posts.index')) {
-                        return route('posts.index');
-                    }
-                    return $this->link ?: '#';
-
-                case 'all_products':
-                    // Check if products.index route exists
-                    if (Route::has('products.index')) {
-                        return route('products.index');
-                    }
-                    return $this->link ?: '#';
-
-                case 'post_category':
-                case 'post_detail':
-                case 'product_category':
-                case 'product_detail':
-                    // Sẽ cần implement logic để lấy URL từ ID
-                    return $this->link ?: '#';
-
-                case 'custom_link':
-                default:
-                    return $this->link ?: '#';
+            // If route_name is specified, try to generate route
+            if ($this->route_name && Route::has($this->route_name)) {
+                return route($this->route_name);
             }
+
+            // If URL is specified, use it directly
+            if ($this->url) {
+                return $this->url;
+            }
+
+            // Fallback to #
+            return '#';
         } catch (\Exception $e) {
-            // Fallback to custom link or # if route generation fails
-            return $this->link ?: '#';
+            // Fallback to URL or # if route generation fails
+            return $this->url ?: '#';
         }
     }
 
@@ -164,8 +156,8 @@ class MenuItem extends Model
 
         while ($current) {
             array_unshift($breadcrumb, [
-                'label' => $current->label,
-                'url' => $current->url
+                'label' => $current->title,
+                'url' => $current->resolved_url
             ]);
             $current = $current->parent;
         }
@@ -179,7 +171,7 @@ class MenuItem extends Model
     public function isActive(): bool
     {
         $currentUrl = request()->url();
-        $menuUrl = $this->url;
+        $menuUrl = $this->resolved_url;
 
         // Exact match
         if ($currentUrl === $menuUrl) {

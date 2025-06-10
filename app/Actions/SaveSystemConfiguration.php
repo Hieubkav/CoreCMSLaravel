@@ -131,9 +131,34 @@ class SaveSystemConfiguration
 
             // Tạo favicon mặc định nếu chưa có
             if (!isset($data['favicon_path'])) {
-                $faviconResult = UploadFaviconAction::createDefaultFavicon('CF');
-                if ($faviconResult['success']) {
-                    $defaultConfig['favicon_path'] = $faviconResult['path'];
+                try {
+                    // Ưu tiên sử dụng default_logo.ico từ public/images/
+                    $defaultFaviconPath = public_path('images/default_logo.ico');
+                    if (file_exists($defaultFaviconPath)) {
+                        // Copy default favicon vào storage
+                        $storagePath = storage_path('app/public/system/favicons');
+                        if (!file_exists($storagePath)) {
+                            mkdir($storagePath, 0755, true);
+                        }
+
+                        $filename = 'default_favicon_' . time() . '.ico';
+                        $storageFilePath = $storagePath . '/' . $filename;
+                        copy($defaultFaviconPath, $storageFilePath);
+
+                        // Copy vào public/favicon.ico
+                        copy($defaultFaviconPath, public_path('favicon.ico'));
+
+                        $defaultConfig['favicon_path'] = 'system/favicons/' . $filename;
+                    } else {
+                        // Fallback: tạo favicon từ text nếu không có default file
+                        $faviconResult = UploadFaviconAction::createDefaultFavicon('CF');
+                        if ($faviconResult['success']) {
+                            $defaultConfig['favicon_path'] = $faviconResult['path'];
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // Bỏ qua lỗi favicon trong setup wizard
+                    $defaultConfig['favicon_path'] = null;
                 }
             }
 

@@ -21,6 +21,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Generated\Models\WebsiteSettings;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -84,6 +85,9 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 // \App\Filament\Admin\Widgets\StatsOverviewWidget::class,
                 // \App\Filament\Admin\Widgets\QuickActionsWidget::class,
+            ])
+            ->plugins([
+                FilamentShieldPlugin::make()
             ])
             // ->spa() // Tạm tắt SPA mode để fix upload issue
             ->unsavedChangesAlerts()

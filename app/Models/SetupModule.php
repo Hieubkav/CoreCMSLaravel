@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Services\ModuleVisibilityService;
+use App\Actions\CheckModuleVisibility;
 
 class SetupModule extends Model
 {
@@ -115,7 +115,7 @@ class SetupModule extends Model
         );
 
         // Clear module visibility cache
-        ModuleVisibilityService::clearCache();
+        CheckModuleVisibility::clearModuleCache();
     }
 
     /**

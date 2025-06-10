@@ -68,25 +68,18 @@ class ProcessModuleSelection
                 'install_sample_data' => $installSampleData
             ]);
 
-            // Cài đặt modules ngay lập tức
-            $installationResult = InstallSelectedModules::run();
+            // Lưu lựa chọn modules vào session để sử dụng trong các bước tiếp theo
+            session(['selected_modules' => $validModules]);
+            session(['install_sample_data' => $installSampleData]);
 
-            if ($installationResult['success']) {
-                return [
-                    'success' => true,
-                    'message' => 'Đã cài đặt modules thành công!',
-                    'modules_installed' => $validModules,
-                    'installation_result' => $installationResult,
-                    'next_step' => 'complete'
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'message' => 'Lỗi khi cài đặt modules: ' . ($installationResult['error'] ?? 'Unknown error'),
-                    'modules_selected' => $validModules,
-                    'installation_result' => $installationResult
-                ];
-            }
+            return [
+                'success' => true,
+                'message' => 'Đã lưu lựa chọn modules thành công!',
+                'modules_to_install' => $modulesToInstall,
+                'selected_modules' => $validModules,
+                'install_sample_data' => $installSampleData,
+                'next_step' => 'frontend-config'
+            ];
 
         } catch (\Exception $e) {
             Log::error('Error processing module selection', [
@@ -106,7 +99,10 @@ class ProcessModuleSelection
      */
     public static function getSelectedModules(): array
     {
-        return SetupModule::whereJsonContains('configuration->selected', true)
+        return SetupModule::where(function($query) {
+                $query->whereJsonContains('configuration->selected', true)
+                      ->orWhereJsonContains('configuration->enabled', true);
+            })
             ->get()
             ->map(function ($module) {
                 return [
@@ -125,11 +121,16 @@ class ProcessModuleSelection
      */
     public static function shouldInstallSampleData(): bool
     {
-        $module = SetupModule::first();
+        $module = SetupModule::where(function($query) {
+                $query->whereJsonContains('configuration->selected', true)
+                      ->orWhereJsonContains('configuration->enabled', true);
+            })->first();
+
         if (!$module || !$module->configuration) {
             return false;
         }
 
-        return $module->configuration['install_sample_data'] ?? false;
+        return $module->configuration['install_sample_data'] ??
+               $module->configuration['create_sample_data'] ?? false;
     }
 }

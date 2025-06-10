@@ -9,14 +9,21 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true; // Allow all users for now, will be restricted after setup
+        // Kiểm tra xem user có role admin không
+        if ($this->hasAnyRole(['Super Admin', 'Admin', 'Editor', 'Viewer'])) {
+            return true;
+        }
+
+        // Fallback cho admin email (trong trường hợp chưa có roles)
+        return $this->isAdmin();
     }
 
     /**

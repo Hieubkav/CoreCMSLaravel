@@ -228,15 +228,21 @@ function configureModule(event) {
     data.enable_staff_pages = document.getElementById('enable_staff_pages').checked;
     data.module_key = 'staff';
     
-    showLoading('Đang cấu hình Staff Management module...');
-    
+    showLoading('Đang cấu hình Staff Management module và generate code...');
+
     submitStep('{{ route('setup.process', 'module-staff') }}', data, (response) => {
         document.getElementById('navigation-section').classList.remove('hidden');
-        
-        // Auto proceed to next step after 2 seconds
+
+        // Show additional success message for generation
+        if (response.generation_results && response.generation_results.generation) {
+            showAlert('✅ Staff Management module đã được cài đặt và code đã được generate thành công!', 'success');
+        }
+
+        // Auto proceed to next step after 3 seconds (longer to see results)
         setTimeout(() => {
+            clearGenerationResults(); // Clear before moving to next step
             goToNextStep('module-content');
-        }, 2000);
+        }, 3000);
     });
 }
 

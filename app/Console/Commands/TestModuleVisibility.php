@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\ModuleVisibilityService;
+use App\Actions\Module\CheckModuleVisibility;
 use App\Models\SetupModule;
 
 class TestModuleVisibility extends Command
@@ -24,7 +24,7 @@ class TestModuleVisibility extends Command
     public function handle()
     {
         if ($this->option('clear-cache')) {
-            ModuleVisibilityService::clearCache();
+            CheckModuleVisibility::clearModuleCache();
             $this->info('✅ Module cache cleared!');
         }
 
@@ -32,14 +32,15 @@ class TestModuleVisibility extends Command
         $this->line('');
 
         // Get debug info
-        $debugInfo = ModuleVisibilityService::getDebugInfo();
+        $enabledModules = (new CheckModuleVisibility())->getEnabledModules();
+        $hiddenResources = [];
 
         // Show enabled modules
         $this->info('📦 Enabled Modules:');
-        if (empty($debugInfo['enabled_modules'])) {
+        if (empty($enabledModules)) {
             $this->warn('   No modules enabled');
         } else {
-            foreach ($debugInfo['enabled_modules'] as $module) {
+            foreach ($enabledModules as $module) {
                 $this->line("   ✅ {$module}");
             }
         }
@@ -47,28 +48,28 @@ class TestModuleVisibility extends Command
 
         // Show hidden resources
         $this->info('🚫 Hidden Resources:');
-        if (empty($debugInfo['hidden_resources'])) {
+        if (empty($hiddenResources)) {
             $this->warn('   No resources hidden');
         } else {
-            foreach ($debugInfo['hidden_resources'] as $resource) {
+            foreach ($hiddenResources as $resource) {
                 $this->line("   ❌ {$resource}");
             }
         }
         $this->line('');
 
-        // Show module mapping
-        $this->info('🗺️  Module → Resource Mapping:');
-        foreach ($debugInfo['module_mapping'] as $module => $resources) {
-            $enabled = in_array($module, $debugInfo['enabled_modules']) ? '✅' : '❌';
-            $this->line("   {$enabled} {$module}:");
-            
-            if (empty($resources)) {
-                $this->line("      (no resources)");
-            } else {
-                foreach ($resources as $resource) {
-                    $this->line("      - {$resource}");
-                }
-            }
+        // Show module mapping (simplified)
+        $this->info('🗺️  Module Status Summary:');
+        $moduleMapping = [
+            'user_roles' => ['App\Filament\Admin\Resources\UserResource'],
+            'blog_posts' => ['App\Filament\Admin\Resources\PostResource', 'App\Filament\Admin\Resources\PostCategoryResource'],
+            'staff' => ['App\Filament\Admin\Resources\StaffResource'],
+            'content_sections' => ['App\Filament\Admin\Resources\SliderResource', 'App\Filament\Admin\Resources\TestimonialResource'],
+            'ecommerce' => ['App\Filament\Admin\Resources\ProductResource'],
+        ];
+
+        foreach ($moduleMapping as $module => $resources) {
+            $enabled = in_array($module, $enabledModules) ? '✅' : '❌';
+            $this->line("   {$enabled} {$module} (" . count($resources) . " resources)");
         }
         $this->line('');
 

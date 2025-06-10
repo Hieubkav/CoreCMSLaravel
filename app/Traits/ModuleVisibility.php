@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\Services\ModuleVisibilityService;
+use App\Actions\Module\CheckModuleVisibility;
 
 trait ModuleVisibility
 {
@@ -11,14 +11,14 @@ trait ModuleVisibility
      */
     public static function shouldRegisterNavigation(): bool
     {
-        // Nếu không có method này, mặc định sử dụng logic module visibility
+        // Nếu không có method này, mặc định hiển thị
         if (!method_exists(static::class, 'getModuleName')) {
-            return ModuleVisibilityService::shouldShowResource(static::class);
+            return true;
         }
 
         // Nếu có method getModuleName, sử dụng module name để kiểm tra
         $moduleName = static::getModuleName();
-        return ModuleVisibilityService::isModuleEnabled($moduleName);
+        return (new CheckModuleVisibility())->handle($moduleName);
     }
 
     /**

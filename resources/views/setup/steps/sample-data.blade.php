@@ -139,7 +139,7 @@
             Quay lại
         </a>
 
-        <button onclick="goToNextStep('installation')"
+        <button onclick="goToNextStep('modules-summary')"
                 class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
             Tiếp theo
             <i class="fas fa-arrow-right ml-2"></i>
@@ -177,7 +177,7 @@ function processSampleData() {
 
         // Auto proceed to next step after 2 seconds
         setTimeout(() => {
-            goToNextStep('installation');
+            goToNextStep('modules-summary');
         }, 2000);
     });
 }

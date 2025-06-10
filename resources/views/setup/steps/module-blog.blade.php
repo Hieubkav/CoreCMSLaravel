@@ -220,15 +220,21 @@ function configureModule(event) {
     data.enable_featured = document.getElementById('enable_featured').checked;
     data.module_key = 'blog_posts';
     
-    showLoading('Đang cấu hình Blog & Posts module...');
-    
+    showLoading('Đang cấu hình Blog & Posts module và generate code...');
+
     submitStep('{{ route('setup.process', 'module-blog') }}', data, (response) => {
         document.getElementById('navigation-section').classList.remove('hidden');
-        
-        // Auto proceed to next step after 2 seconds
+
+        // Show additional success message for generation
+        if (response.generation_results && response.generation_results.generation) {
+            showAlert('✅ Blog module đã được cài đặt và code đã được generate thành công!', 'success');
+        }
+
+        // Auto proceed to next step after 3 seconds (longer to see results)
         setTimeout(() => {
+            clearGenerationResults(); // Clear before moving to next step
             goToNextStep('module-staff');
-        }, 2000);
+        }, 3000);
     });
 }
 

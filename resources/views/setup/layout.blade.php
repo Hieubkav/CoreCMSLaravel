@@ -7,6 +7,26 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        .generation-progress {
+            transition: all 0.3s ease;
+        }
+        .generation-item {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .success-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -50,7 +70,19 @@
 
                 // Get actual step number from step data
                 $currentStepNumber = $allSteps[$currentStepKey]['step'] ?? ($currentIndex + 1);
-                $totalSteps = count($stepKeys);
+                $totalSteps = count($allSteps);
+
+                // Debug: Log step calculation (only in local)
+                if (app()->environment('local')) {
+                    \Log::info('Step calculation debug', [
+                        'currentStepKey' => $currentStepKey,
+                        'currentIndex' => $currentIndex,
+                        'stepFromData' => $allSteps[$currentStepKey]['step'] ?? 'not found',
+                        'calculatedStepNumber' => $currentStepNumber,
+                        'totalSteps' => $totalSteps,
+                        'allStepsCount' => count($allSteps)
+                    ]);
+                }
 
                 // Group steps for better display
                 $groupedSteps = [
@@ -115,10 +147,8 @@
         </div>
 
         <!-- Main Content -->
-        <div class="max-w-2xl mx-auto">
-            <div class="bg-white rounded-lg shadow-sm border p-8">
-                @yield('content')
-            </div>
+        <div class="w-full">
+            @yield('content')
         </div>
 
         <!-- Footer -->
@@ -179,7 +209,7 @@
             }, 5000);
         }
 
-        // AJAX form submission helper
+        // AJAX form submission helper with generation progress
         function submitStep(url, data, successCallback, errorCallback) {
             showLoading();
 
@@ -188,11 +218,24 @@
                     hideLoading();
                     if (response.data.success) {
                         showAlert(response.data.message, 'success');
+
+                        // Show generation results if available
+                        if (response.data.generation_results) {
+                            showGenerationResults(response.data.generation_results);
+                        }
+
                         if (successCallback) {
                             successCallback(response.data);
                         }
                     } else {
-                        showAlert(response.data.error || 'Có lỗi xảy ra', 'error');
+                        // Handle validation errors
+                        if (response.data.errors) {
+                            handleValidationErrors(response.data.errors);
+                            showAlert('Vui lòng kiểm tra lại thông tin đã nhập', 'error');
+                        } else {
+                            showAlert(response.data.error || response.data.message || 'Có lỗi xảy ra', 'error');
+                        }
+
                         if (errorCallback) {
                             errorCallback(response.data);
                         }
@@ -200,15 +243,90 @@
                 })
                 .catch(error => {
                     hideLoading();
-                    const message = error.response?.data?.error ||
-                                  error.response?.data?.message ||
-                                  'Có lỗi xảy ra khi xử lý yêu cầu';
+                    console.error('Setup Error Details:', error);
+
+                    let message = 'Có lỗi xảy ra khi xử lý yêu cầu';
+                    let details = [];
+
+                    if (error.response) {
+                        // Server responded with error status
+                        const status = error.response.status;
+                        const data = error.response.data;
+
+                        if (status === 422 && data.errors) {
+                            // Validation errors
+                            handleValidationErrors(data.errors);
+                            message = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';
+                        } else if (status === 419) {
+                            message = 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.';
+                        } else if (status === 500) {
+                            message = 'Lỗi server nội bộ. Vui lòng thử lại sau.';
+                            if (data.message) {
+                                details.push('Chi tiết: ' + data.message);
+                            }
+                        } else if (data.error) {
+                            message = data.error;
+                        } else if (data.message) {
+                            message = data.message;
+                        } else {
+                            message = `Lỗi HTTP ${status}`;
+                        }
+
+                        // Add technical details for debugging
+                        details.push(`HTTP ${status}: ${error.response.statusText}`);
+                        if (data.file && data.line) {
+                            details.push(`File: ${data.file}:${data.line}`);
+                        }
+
+                    } else if (error.request) {
+                        // Network error
+                        message = 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.';
+                        details.push('Network Error: ' + error.message);
+                    } else {
+                        // Other error
+                        message = 'Lỗi không xác định: ' + error.message;
+                    }
+
+                    // Show detailed error in development
+                    if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
+                        if (details.length > 0) {
+                            message += '\n\nChi tiết lỗi (chỉ hiển thị trong development):\n' + details.join('\n');
+                        }
+                    }
+
                     showAlert(message, 'error');
-                    console.error('Setup Error:', error);
+
                     if (errorCallback) {
                         errorCallback(error);
                     }
                 });
+        }
+
+        // Handle validation errors
+        function handleValidationErrors(errors) {
+            Object.keys(errors).forEach(field => {
+                const errorMessage = Array.isArray(errors[field]) ? errors[field][0] : errors[field];
+                showFieldError(field, errorMessage);
+            });
+        }
+
+        // Show field-specific error
+        function showFieldError(fieldName, message) {
+            const field = document.getElementById(fieldName);
+            const errorDiv = document.getElementById(`${fieldName}-error`);
+
+            if (field) {
+                field.classList.add('border-red-500');
+                field.focus();
+            }
+
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.classList.remove('hidden');
+            } else {
+                // If no specific error div, show in alert
+                console.warn(`No error div found for field: ${fieldName}`);
+            }
         }
 
         // Navigation helpers
@@ -224,6 +342,81 @@
                     window.location.href = data.redirect || '/';
                 }, 2000);
             });
+        }
+
+        // Show generation results
+        function showGenerationResults(results) {
+            // Create or update generation results container
+            let container = document.getElementById('generation-results');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'generation-results';
+                container.className = 'mt-6 p-4 bg-green-50 border border-green-200 rounded-lg generation-progress';
+
+                // Insert after loading container or at the end of main content
+                const loadingContainer = document.getElementById('loading-container');
+                const mainContent = document.querySelector('.max-w-4xl') || document.querySelector('.container');
+                if (loadingContainer && loadingContainer.parentNode) {
+                    loadingContainer.parentNode.insertBefore(container, loadingContainer.nextSibling);
+                } else if (mainContent) {
+                    mainContent.appendChild(container);
+                }
+            }
+
+            let html = '<div class="flex items-center mb-3"><i class="fas fa-check-circle text-green-600 mr-2"></i><h3 class="text-lg font-semibold text-green-800">✅ Code Generation Completed!</h3></div>';
+
+            if (results.generation) {
+                html += '<div class="space-y-2">';
+                for (const [type, items] of Object.entries(results.generation)) {
+                    if (Array.isArray(items) && items.length > 0) {
+                        html += `<div class="generation-item">
+                            <div class="flex items-center text-sm text-green-700">
+                                <i class="fas fa-file-code mr-2"></i>
+                                <span class="font-medium capitalize">${type}:</span>
+                                <span class="ml-1">${items.length} files created</span>
+                            </div>
+                            <div class="ml-6 text-xs text-green-600 space-y-1">
+                                ${items.map(item => `<div>• ${item}</div>`).join('')}
+                            </div>
+                        </div>`;
+                    }
+                }
+                html += '</div>';
+            }
+
+            if (results.migration) {
+                html += `<div class="generation-item mt-3 p-2 bg-blue-50 border border-blue-200 rounded">
+                    <div class="flex items-center text-sm text-blue-700">
+                        <i class="fas fa-database mr-2"></i>
+                        <span>🗄️ ${results.migration}</span>
+                    </div>
+                </div>`;
+            }
+
+            if (results.generation_error) {
+                html += `<div class="generation-item mt-3 p-2 bg-red-50 border border-red-200 rounded">
+                    <div class="flex items-center text-sm text-red-700">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <span>❌ Generation Error: ${results.generation_error}</span>
+                    </div>
+                </div>`;
+            }
+
+            container.innerHTML = html;
+            container.classList.add('success-pulse');
+
+            // Remove pulse animation after 2 seconds
+            setTimeout(() => {
+                container.classList.remove('success-pulse');
+            }, 2000);
+        }
+
+        // Clear generation results
+        function clearGenerationResults() {
+            const container = document.getElementById('generation-results');
+            if (container) {
+                container.remove();
+            }
         }
     </script>
 
