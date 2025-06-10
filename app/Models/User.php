@@ -22,6 +22,11 @@ class User extends Authenticatable implements FilamentUser
             return true;
         }
 
+        // Fallback: Cho phép user đầu tiên (admin được tạo trong setup)
+        if ($this->id === 1) {
+            return true;
+        }
+
         // Fallback cho admin email (trong trường hợp chưa có roles)
         return $this->isAdmin();
     }

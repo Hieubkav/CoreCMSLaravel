@@ -20,7 +20,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use App\Generated\Models\WebsiteSettings;
+// use App\Generated\Models\WebsiteSettings;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 
 
@@ -152,9 +152,9 @@ class AdminPanelProvider extends PanelProvider
 
         // 2. Load core resources (luôn hiển thị)
         $coreResources = [
-            'App\\Generated\\Filament\\Resources\\SystemConfigurationResource',
-            'App\\Generated\\Filament\\Resources\\WebsiteSettingsResource',
-            'App\\Generated\\Filament\\Resources\\MenuItemResource',
+            // 'App\\Generated\\Filament\\Resources\\SystemConfigurationResource',
+            // 'App\\Generated\\Filament\\Resources\\WebsiteSettingsResource',
+            // 'App\\Generated\\Filament\\Resources\\MenuItemResource',
             'App\\Filament\\Admin\\Resources\\UserResource',
         ];
 

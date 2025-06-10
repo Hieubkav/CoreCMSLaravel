@@ -13,8 +13,8 @@
                 <a href="#features" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
                     Get Started
                 </a>
-                <a href="/posts" class="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition">
-                    View Posts
+                <a href="{{ route('filament.admin.pages.dashboard') }}" class="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition">
+                    Admin Panel
                 </a>
             </div>
         </div>
@@ -81,7 +81,7 @@
                     <div class="p-6">
                         <h3 class="text-xl font-semibold mb-3 line-clamp-2">{{ $post->title }}</h3>
                         <p class="text-gray-600 mb-4 line-clamp-3">{!! Str::limit(strip_tags($post->content), 120) !!}</p>
-                        <a href="{{ route('posts.show', $post->slug) }}" class="text-blue-600 font-semibold hover:text-blue-800 transition">
+                        <a href="#" class="text-blue-600 font-semibold hover:text-blue-800 transition">
                             Read More →
                         </a>
                     </div>
@@ -90,8 +90,8 @@
             </div>
 
             <div class="text-center mt-12">
-                <a href="{{ route('posts.index') }}" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
-                    View All Posts
+                <a href="{{ route('filament.admin.pages.dashboard') }}" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+                    Go to Admin Panel
                 </a>
             </div>
         </div>
@@ -105,7 +105,7 @@
             <p class="text-xl mb-8 max-w-2xl mx-auto">
                 Start building amazing applications with Core Framework today
             </p>
-            <a href="/setup" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+            <a href="{{ route('setup.index') }}" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
                 Start Setup
             </a>
         </div>

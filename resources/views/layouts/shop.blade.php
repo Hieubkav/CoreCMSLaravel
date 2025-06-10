@@ -481,7 +481,7 @@
     @include('components.public.speedial')
 
     <!-- Toast Notifications -->
-    @livewire('toast-notifications')
+    <div id="toast-notifications"></div>
 
     <!-- Critical Scripts -->
     @filamentScripts

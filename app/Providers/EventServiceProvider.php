@@ -8,7 +8,7 @@ use App\Models\Setting;
 use App\Models\SystemConfiguration;
 use App\Models\MenuItem;
 use App\Models\Product;
-use App\Observers\PostObserver;
+// use App\Observers\PostObserver;
 use App\Observers\SliderObserver;
 use App\Observers\SettingObserver;
 use App\Observers\SystemConfigurationObserver;
@@ -38,22 +38,22 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Register observers for existing models only
-        Post::observe(PostObserver::class);
-        Slider::observe(SliderObserver::class);
+        // Post::observe(PostObserver::class);
+        // Slider::observe(SliderObserver::class);
         Setting::observe(SettingObserver::class);
 
         // Register observers for new modules (only if tables exist)
-        if (Schema::hasTable('system_configurations')) {
-            SystemConfiguration::observe(SystemConfigurationObserver::class);
-        }
+        // if (Schema::hasTable('system_configurations')) {
+        //     SystemConfiguration::observe(SystemConfigurationObserver::class);
+        // }
 
-        if (Schema::hasTable('menu_items')) {
-            MenuItem::observe(MenuItemObserver::class);
-        }
+        // if (Schema::hasTable('menu_items')) {
+        //     MenuItem::observe(MenuItemObserver::class);
+        // }
 
-        if (Schema::hasTable('products')) {
-            Product::observe(ProductObserver::class);
-        }
+        // if (Schema::hasTable('products')) {
+        //     Product::observe(ProductObserver::class);
+        // }
     }
 
     /**

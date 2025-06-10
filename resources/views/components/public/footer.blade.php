@@ -26,11 +26,9 @@
                 <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
                 <ul class="space-y-2">
                     <li><a href="{{ route('storeFront') }}" class="text-gray-300 hover:text-white transition">Home</a></li>
-                    <li><a href="{{ route('posts.index') }}" class="text-gray-300 hover:text-white transition">Posts</a></li>
-                    @if(isset($postCategories) && $postCategories->isNotEmpty())
-                        @foreach($postCategories->take(3) as $category)
-                        <li><a href="{{ route('posts.category', $category->slug) }}" class="text-gray-300 hover:text-white transition">{{ $category->name }}</a></li>
-                        @endforeach
+                    <li><a href="{{ route('filament.admin.pages.dashboard') }}" class="text-gray-300 hover:text-white transition">Admin Panel</a></li>
+                    @if(app()->environment('local'))
+                    <li><a href="{{ route('setup.index') }}" class="text-gray-300 hover:text-white transition">Setup Wizard</a></li>
                     @endif
                     <li><a href="/admin" class="text-gray-300 hover:text-white transition">Admin Panel</a></li>
                 </ul>

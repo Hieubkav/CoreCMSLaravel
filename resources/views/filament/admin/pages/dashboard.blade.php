@@ -63,9 +63,22 @@
                 <div class="flex items-center justify-between">
                     <div class="flex-1">
                         <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">Total Posts</p>
-                        <p class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ \App\Models\Post::count() }}</p>
+                        @php
+                            $postCount = 0;
+                            $publishedCount = 0;
+                            // Kiểm tra file tồn tại thay vì class_exists để tránh autoload
+                            if (file_exists(app_path('Models/Post.php'))) {
+                                try {
+                                    $postCount = \App\Models\Post::count();
+                                    $publishedCount = \App\Models\Post::where('status', 'active')->count();
+                                } catch (\Exception $e) {
+                                    // Model exists but table might not exist
+                                }
+                            }
+                        @endphp
+                        <p class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ $postCount }}</p>
                         <p class="text-purple-600 dark:text-purple-400 text-xs font-medium">
-                            {{ \App\Models\Post::where('status', 'active')->count() }} published
+                            {{ $publishedCount }} published
                         </p>
                     </div>
                     <div class="w-14 h-14 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -81,9 +94,22 @@
                 <div class="flex items-center justify-between">
                     <div class="flex-1">
                         <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">Categories</p>
-                        <p class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ \App\Models\CatPost::count() }}</p>
+                        @php
+                            $categoryCount = 0;
+                            $activeCategoryCount = 0;
+                            // Kiểm tra file tồn tại thay vì class_exists để tránh autoload
+                            if (file_exists(app_path('Models/CatPost.php'))) {
+                                try {
+                                    $categoryCount = \App\Models\CatPost::count();
+                                    $activeCategoryCount = \App\Models\CatPost::where('status', 'active')->count();
+                                } catch (\Exception $e) {
+                                    // Model exists but table might not exist
+                                }
+                            }
+                        @endphp
+                        <p class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ $categoryCount }}</p>
                         <p class="text-blue-600 dark:text-blue-400 text-xs font-medium">
-                            {{ \App\Models\CatPost::where('status', 'active')->count() }} active
+                            {{ $activeCategoryCount }} active
                         </p>
                     </div>
                     <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -125,6 +151,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Create New Post -->
+            @if(file_exists(app_path('Models/Post.php')))
             <a href="/admin/posts/create" class="quick-action-btn">
                 <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-3">
                     <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
@@ -133,6 +160,16 @@
                 </div>
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">New Post</span>
             </a>
+            @else
+            <div class="quick-action-btn opacity-50 cursor-not-allowed">
+                <div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mb-3">
+                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-gray-500">New Post (Not Available)</span>
+            </div>
+            @endif
 
             <!-- Manage Users -->
             <a href="/admin/users" class="quick-action-btn">
@@ -145,6 +182,7 @@
             </a>
 
             <!-- Categories -->
+            @if(file_exists(app_path('Models/CatPost.php')))
             <a href="/admin/cat-posts" class="quick-action-btn">
                 <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-3">
                     <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 20 20">
@@ -153,15 +191,25 @@
                 </div>
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Categories</span>
             </a>
+            @else
+            <div class="quick-action-btn opacity-50 cursor-not-allowed">
+                <div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mb-3">
+                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-gray-500">Categories (Not Available)</span>
+            </div>
+            @endif
 
             <!-- Settings -->
-            <a href="/admin/settings" class="quick-action-btn">
+            <a href="/admin" class="quick-action-btn">
                 <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center mb-3">
                     <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
                     </svg>
                 </div>
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Settings</span>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Dashboard</span>
             </a>
         </div>
     </div>
@@ -177,10 +225,19 @@
 
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             @php
-                $recentPosts = \App\Models\Post::where('status', 'active')
-                    ->orderBy('created_at', 'desc')
-                    ->limit(5)
-                    ->get();
+                $recentPosts = collect();
+                // Kiểm tra file tồn tại thay vì class_exists để tránh autoload
+                if (file_exists(app_path('Models/Post.php'))) {
+                    try {
+                        $recentPosts = \App\Models\Post::where('status', 'active')
+                            ->orderBy('created_at', 'desc')
+                            ->limit(5)
+                            ->get();
+                    } catch (\Exception $e) {
+                        // Model exists but table might not exist
+                        $recentPosts = collect();
+                    }
+                }
             @endphp
 
             @if($recentPosts->isNotEmpty())
