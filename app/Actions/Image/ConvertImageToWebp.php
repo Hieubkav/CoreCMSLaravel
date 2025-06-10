@@ -5,7 +5,8 @@ namespace App\Actions\Image;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ConvertImageToWebp
 {
@@ -24,14 +25,15 @@ class ConvertImageToWebp
             // Đường dẫn đầy đủ
             $filePath = $directory . '/' . $webpFileName;
             
-            // Convert image sang WebP
-            $image = Image::make($file);
-            
-            // Optimize image
-            $image->encode('webp', 85); // 85% quality for good balance
-            
+            // Convert image sang WebP với Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file);
+
+            // Encode to WebP với quality 85%
+            $encoded = $image->toWebp(85);
+
             // Lưu vào storage
-            Storage::disk('public')->put($filePath, $image->stream());
+            Storage::disk('public')->put($filePath, $encoded);
             
             return $filePath;
 
@@ -148,18 +150,16 @@ class ConvertImageToWebp
             $webpFileName = pathinfo($fileName, PATHINFO_FILENAME) . '.webp';
             $filePath = $directory . '/' . $webpFileName;
 
-            $image = Image::make($file);
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file);
 
             // Resize if needed
             if ($maxWidth || $maxHeight) {
-                $image->resize($maxWidth, $maxHeight, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
+                $image = $image->scale($maxWidth, $maxHeight);
             }
 
-            $image->encode('webp', $quality);
-            Storage::disk('public')->put($filePath, $image->stream());
+            $encoded = $image->toWebp($quality);
+            Storage::disk('public')->put($filePath, $encoded);
 
             return $filePath;
 

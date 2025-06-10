@@ -169,7 +169,7 @@ return [
 
         App\Providers\EventServiceProvider::class,
         App\Providers\Filament\AdminPanelProvider::class,
-        App\Providers\HelperServiceProvider::class,
+        App\Providers\HelperServiceProvider::class, // Đã sửa safe foreach
         App\Providers\RouteServiceProvider::class,
         App\Providers\VoltServiceProvider::class,
         App\Providers\ViewServiceProvider::class,

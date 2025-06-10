@@ -37,6 +37,15 @@ class CodeGenerator
             'filament_pages' => [],
             'filament_widgets' => [],
         ],
+        'admin' => [
+            'models' => [],
+            'filament_resources' => [
+                'UserResource.php',
+                'RoleResource.php',
+            ],
+            'filament_pages' => [],
+            'filament_widgets' => [],
+        ],
         'user-roles' => [
             'models' => [
                 // User.php là core model, không sinh
@@ -140,6 +149,9 @@ class CodeGenerator
                 'NotificationSetting.php',
                 'BackupSetting.php',
                 'WidgetSetting.php',
+            ],
+            'observers' => [
+                'SettingObserver.php',
             ],
             'filament_resources' => [
                 'SystemConfigurationResource.php',
@@ -431,6 +443,11 @@ class CodeGenerator
                 self::generateModels($mapping['models'], $templatesPath, $results);
             }
 
+            // Sinh Observers
+            if (!empty($mapping['observers'])) {
+                self::generateObservers($mapping['observers'], $templatesPath, $results);
+            }
+
             // Sinh Filament Resources
             if (!empty($mapping['filament_resources'])) {
                 self::generateFilamentResources($mapping['filament_resources'], $templatesPath, $results);
@@ -525,6 +542,36 @@ class CodeGenerator
     }
 
     /**
+     * Sinh Observers từ templates
+     */
+    private static function generateObservers(array $observers, string $templatesPath, array &$results): void
+    {
+        $targetPath = app_path('Observers');
+        $templatePath = $templatesPath . '/observers';
+
+        if (!File::exists($targetPath)) {
+            File::makeDirectory($targetPath, 0755, true);
+        }
+
+        $generatedFiles = [];
+
+        foreach ($observers as $observer) {
+            $templateFilePath = $templatePath . '/' . $observer;
+
+            if (File::exists($templateFilePath)) {
+                File::copy($templateFilePath, $targetPath . '/' . $observer);
+                $generatedFiles[] = $observer;
+            }
+        }
+
+        $results['observers'] = [
+            'status' => 'success',
+            'message' => 'Đã sinh ' . count($generatedFiles) . ' Observers',
+            'files' => $generatedFiles
+        ];
+    }
+
+    /**
      * Sinh Filament Resources từ templates
      */
     private static function generateFilamentResources(array $resources, string $templatesPath, array &$results): void
@@ -542,17 +589,30 @@ class CodeGenerator
             $resourceName = str_replace('.php', '', $resource);
             $templateResourcePath = $templatePath . '/' . $resourceName;
             $templateFilePath = $templatePath . '/' . $resource;
-            
+
             // Nếu là thư mục resource (có Pages, RelationManagers)
             if (File::exists($templateResourcePath)) {
                 $targetResourcePath = $targetPath . '/' . $resourceName;
+
+                // Xóa thư mục cũ nếu tồn tại để force overwrite
+                if (File::exists($targetResourcePath)) {
+                    File::deleteDirectory($targetResourcePath);
+                }
+
                 File::copyDirectory($templateResourcePath, $targetResourcePath);
                 $generatedFiles[] = $resourceName . ' (directory)';
             }
-            
+
             // Nếu là file resource đơn lẻ
             if (File::exists($templateFilePath)) {
-                File::copy($templateFilePath, $targetPath . '/' . $resource);
+                $targetFilePath = $targetPath . '/' . $resource;
+
+                // Force overwrite nếu file đã tồn tại
+                if (File::exists($targetFilePath)) {
+                    File::delete($targetFilePath);
+                }
+
+                File::copy($templateFilePath, $targetFilePath);
                 $generatedFiles[] = $resource;
             }
         }

@@ -53,12 +53,21 @@ class ProcessWebsiteStep
             $result = SaveWebsiteSettings::saveWithValidation($data);
 
             if ($result['success']) {
+                // Bước bổ sung: Sinh Filament Settings page vì đã có dữ liệu settings
+                $generateResult = \App\Actions\Setup\CodeGenerator::generateForStep('settings');
+
                 $message = $result['message'];
                 if (!empty($imageResults)) {
                     $message .= ' ' . implode(', ', $imageResults) . '.';
                 }
+
+                if ($generateResult['success']) {
+                    $message .= ' Đã tạo Filament Settings page để quản lý.';
+                }
+
                 $result['message'] = $message;
                 $result['images'] = $imageResults;
+                $result['generate_result'] = $generateResult;
 
                 return $result;
             } else {

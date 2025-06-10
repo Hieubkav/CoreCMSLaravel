@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Visitor;
-use App\Models\Course;
 use Illuminate\Support\Facades\Log;
 
 class TrackVisitor
@@ -34,11 +33,14 @@ class TrackVisitor
         try {
             $courseId = null;
 
-            // Detect course page
+            // Detect course page (safe check for Course model)
             if ($request->route() && $request->route()->getName() === 'courses.show') {
                 $courseSlug = $request->route('slug');
-                $course = Course::where('slug', $courseSlug)->first();
-                $courseId = $course?->id;
+                // Safe check if Course model exists
+                if (class_exists('\App\Models\Course')) {
+                    $course = \App\Models\Course::where('slug', $courseSlug)->first();
+                    $courseId = $course?->id;
+                }
             }
 
             // Tránh duplicate trong cùng session và URL

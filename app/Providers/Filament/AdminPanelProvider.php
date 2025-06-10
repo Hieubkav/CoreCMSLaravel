@@ -21,7 +21,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 // use App\Generated\Models\WebsiteSettings;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+// use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -87,7 +87,7 @@ class AdminPanelProvider extends PanelProvider
                 // \App\Filament\Admin\Widgets\QuickActionsWidget::class,
             ])
             ->plugins([
-                FilamentShieldPlugin::make()
+                // FilamentShieldPlugin::make() // Removed - using spatie/laravel-permission directly
             ])
             // ->spa() // Tạm tắt SPA mode để fix upload issue
             ->unsavedChangesAlerts()
@@ -142,20 +142,22 @@ class AdminPanelProvider extends PanelProvider
         $generatedPath = app_path('Generated/Filament/Resources');
         if (is_dir($generatedPath)) {
             $generatedFiles = glob($generatedPath . '/*Resource.php');
-            foreach ($generatedFiles as $file) {
-                $className = 'App\\Generated\\Filament\\Resources\\' . basename($file, '.php');
-                if (class_exists($className)) {
-                    $resources[] = $className;
+            if (is_array($generatedFiles)) {
+                foreach ($generatedFiles as $file) {
+                    $className = 'App\\Generated\\Filament\\Resources\\' . basename($file, '.php');
+                    if (class_exists($className)) {
+                        $resources[] = $className;
+                    }
                 }
             }
         }
 
-        // 2. Load core resources (luôn hiển thị)
+        // 2. Load core resources (chỉ load khi đã được tạo trong setup)
         $coreResources = [
             // 'App\\Generated\\Filament\\Resources\\SystemConfigurationResource',
             // 'App\\Generated\\Filament\\Resources\\WebsiteSettingsResource',
             // 'App\\Generated\\Filament\\Resources\\MenuItemResource',
-            'App\\Filament\\Admin\\Resources\\UserResource',
+            // UserResource và RoleResource sẽ được tạo trong bước admin setup
         ];
 
         foreach ($coreResources as $resourceClass) {
@@ -164,11 +166,11 @@ class AdminPanelProvider extends PanelProvider
             }
         }
 
-        // 3. Load remaining resources từ Admin/Resources (nếu không có Generated)
-        if (empty($resources)) {
-            $adminPath = app_path('Filament/Admin/Resources');
-            if (is_dir($adminPath)) {
-                $adminFiles = glob($adminPath . '/*Resource.php');
+        // 3. Load resources từ Admin/Resources (luôn load)
+        $adminPath = app_path('Filament/Admin/Resources');
+        if (is_dir($adminPath)) {
+            $adminFiles = glob($adminPath . '/*Resource.php');
+            if (is_array($adminFiles)) {
                 foreach ($adminFiles as $file) {
                     $className = 'App\\Filament\\Admin\\Resources\\' . basename($file, '.php');
                     if (class_exists($className)) {

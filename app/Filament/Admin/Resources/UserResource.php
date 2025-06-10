@@ -83,6 +83,17 @@ class UserResource extends Resource
                             ->default('active')
                             ->required(),
                     ])->columns(2),
+
+                Section::make('Vai trò và quyền hạn')
+                    ->schema([
+                        Select::make('roles')
+                            ->label('Vai trò')
+                            ->multiple()
+                            ->relationship('roles', 'name')
+                            ->preload()
+                            ->searchable()
+                            ->helperText('Chọn vai trò cho người dùng này'),
+                    ])->columns(1),
             ]);
     }
 
@@ -115,6 +126,13 @@ class UserResource extends Resource
                     ->placeholder('Chưa xác thực')
                     ->badge()
                     ->color(fn ($state) => $state ? 'success' : 'warning'),
+
+                TextColumn::make('roles.name')
+                    ->label('Vai trò')
+                    ->badge()
+                    ->color('info')
+                    ->separator(',')
+                    ->searchable(),
 
                 TextColumn::make('order')
                     ->label('Thứ tự')

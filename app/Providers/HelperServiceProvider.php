@@ -34,9 +34,11 @@ class HelperServiceProvider extends ServiceProvider
             app_path('Helpers/PlaceholderHelper.php'),
         ];
 
-        foreach ($helperFiles as $file) {
-            if (file_exists($file)) {
-                require_once $file;
+        if (is_array($helperFiles)) {
+            foreach ($helperFiles as $file) {
+                if (file_exists($file)) {
+                    require_once $file;
+                }
             }
         }
     }
