@@ -16,6 +16,7 @@ class AdminConfiguration extends Model
 
         // Analytics & Tracking
         'visitor_analytics_enabled',
+        'enable_visitor_tracking',
 
         // Performance Settings
         'query_cache',
@@ -40,6 +41,7 @@ class AdminConfiguration extends Model
 
     protected $casts = [
         'visitor_analytics_enabled' => 'boolean',
+        'enable_visitor_tracking' => 'boolean',
         'query_cache' => 'boolean',
         'eager_loading' => 'boolean',
         'asset_optimization' => 'boolean',

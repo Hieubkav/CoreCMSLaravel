@@ -101,11 +101,20 @@ class ProcessConfigurationSteps
                 // Vẫn lưu vào session để backup
                 session(['admin_config' => $data]);
 
+                // Sinh code cho Filament page và widgets để quản lý admin configuration
+                $generateResult = \App\Actions\Setup\CodeGenerator::generateForStep('admin-config');
+
+                $message = 'Đã lưu cấu hình admin dashboard vào bảng admin_configurations thành công!';
+                if ($generateResult['success']) {
+                    $message .= ' Đã tạo Filament Admin Configuration page và Analytics Widgets để quản lý.';
+                }
+
                 return [
                     'success' => true,
-                    'message' => 'Đã lưu cấu hình admin dashboard vào bảng admin_configurations thành công!',
+                    'message' => $message,
                     'config_id' => $result['config']->id ?? null,
-                    'note' => 'Bảng admin_configurations đã được tạo sẵn trong bước database'
+                    'note' => 'Bảng admin_configurations đã được tạo sẵn trong bước database',
+                    'generate_result' => $generateResult
                 ];
             } else {
                 return [

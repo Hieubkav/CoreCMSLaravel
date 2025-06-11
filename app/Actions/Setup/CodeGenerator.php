@@ -54,6 +54,17 @@ class CodeGenerator
             ],
             'filament_widgets' => [],
         ],
+        'admin-config' => [
+            'models' => [],
+            'filament_resources' => [],
+            'filament_pages' => [
+                'ManageAdminConfiguration.php',
+            ],
+            'filament_widgets' => [
+                'VisitorStatsWidget.php',
+                'AnalyticsOverviewWidget.php',
+            ],
+        ],
         'user-roles' => [
             'models' => [
                 // User.php là core model, không sinh
@@ -716,14 +727,48 @@ class CodeGenerator
             if (File::exists($templateFilePath)) {
                 File::copy($templateFilePath, $targetPath . '/' . $widget);
                 $generatedFiles[] = $widget;
+
+                // Sinh view file tương ứng nếu có template
+                self::generateFilamentWidgetView($widget, $templatesPath, $generatedFiles);
             }
         }
 
         $results['filament_widgets'] = [
             'status' => 'success',
-            'message' => 'Đã sinh ' . count($generatedFiles) . ' Filament widgets',
+            'message' => 'Đã sinh ' . count($generatedFiles) . ' Filament widgets và views',
             'files' => $generatedFiles
         ];
+    }
+
+    /**
+     * Sinh view file cho Filament widget
+     */
+    private static function generateFilamentWidgetView(string $widget, string $templatesPath, array &$generatedFiles): void
+    {
+        // Chuyển đổi tên widget thành view name
+        $viewName = self::convertWidgetNameToViewName($widget);
+        $templateViewPath = $templatesPath . '/views/filament/admin/widgets/' . $viewName . '.blade.php';
+
+        if (File::exists($templateViewPath)) {
+            $targetViewPath = resource_path('views/filament/admin/widgets');
+
+            if (!File::exists($targetViewPath)) {
+                File::makeDirectory($targetViewPath, 0755, true);
+            }
+
+            File::copy($templateViewPath, $targetViewPath . '/' . $viewName . '.blade.php');
+            $generatedFiles[] = 'views/' . $viewName . '.blade.php';
+        }
+    }
+
+    /**
+     * Chuyển đổi tên widget thành view name
+     */
+    private static function convertWidgetNameToViewName(string $widgetName): string
+    {
+        // AnalyticsOverviewWidget.php -> analytics-overview
+        $name = str_replace(['Widget.php', '.php'], '', $widgetName);
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $name));
     }
 
     /**
@@ -850,80 +895,33 @@ return new class extends Migration
         Schema::create(\'admin_configurations\', function (Blueprint $table) {
             $table->id();
 
-            // Dashboard Settings
-            $table->string(\'dashboard_title\')->default(\'Admin Dashboard\');
-            $table->string(\'dashboard_theme\')->default(\'light\'); // light, dark
-            $table->string(\'sidebar_style\')->default(\'expanded\'); // expanded, collapsed, overlay
-            $table->boolean(\'enable_dark_mode_toggle\')->default(true);
+            // Admin Colors
+            $table->string(\'admin_primary_color\')->default(\'#1f2937\');
+            $table->string(\'admin_secondary_color\')->default(\'#374151\');
 
-            // Navigation & Menu
-            $table->boolean(\'show_dashboard_widgets\')->default(true);
-            $table->boolean(\'show_quick_actions\')->default(true);
-            $table->boolean(\'enable_breadcrumbs\')->default(true);
-            $table->string(\'menu_style\')->default(\'sidebar\'); // sidebar, topbar, hybrid
+            // Analytics & Tracking
+            $table->boolean(\'visitor_analytics_enabled\')->default(false);
+            $table->boolean(\'enable_visitor_tracking\')->default(false);
 
-            // Data Management
-            $table->integer(\'records_per_page\')->default(25); // 10, 25, 50, 100
-            $table->boolean(\'enable_bulk_actions\')->default(true);
-            $table->boolean(\'enable_export_functions\')->default(true);
-            $table->boolean(\'enable_import_functions\')->default(false);
-            $table->boolean(\'enable_advanced_filters\')->default(true);
+            // Performance Settings
+            $table->boolean(\'query_cache\')->default(true);
+            $table->boolean(\'eager_loading\')->default(true);
+            $table->boolean(\'asset_optimization\')->default(true);
+            $table->integer(\'cache_duration\')->default(300); // seconds
+            $table->integer(\'pagination_size\')->default(25);
 
-            // User Management
-            $table->boolean(\'enable_user_registration\')->default(false);
-            $table->boolean(\'require_email_verification\')->default(true);
-            $table->boolean(\'enable_two_factor_auth\')->default(false);
-            $table->string(\'default_user_role\')->default(\'user\');
+            // Image Processing
+            $table->integer(\'webp_quality\')->default(95); // 1-100
+            $table->integer(\'max_width\')->default(1920);
+            $table->integer(\'max_height\')->default(1080);
 
-            // Content Management
-            $table->boolean(\'enable_rich_text_editor\')->default(true);
-            $table->boolean(\'enable_media_library\')->default(true);
-            $table->boolean(\'enable_file_manager\')->default(true);
-            $table->string(\'default_image_quality\')->default(\'80\'); // 60, 80, 90, 100
-            $table->string(\'max_upload_size\')->default(\'10MB\'); // 5MB, 10MB, 20MB, 50MB
-
-            // SEO & Analytics
-            $table->boolean(\'enable_seo_tools\')->default(true);
-            $table->boolean(\'enable_analytics_dashboard\')->default(true);
-            $table->boolean(\'enable_visitor_tracking\')->default(true);
+            // SEO Configuration
             $table->boolean(\'seo_auto_generate\')->default(true);
-            $table->string(\'default_description\')->default(\'Powered by Core Laravel Framework\');
+            $table->string(\'default_description\')->default(\'Powered by Core Framework\');
 
-            // Security Settings
-            $table->boolean(\'enable_activity_log\')->default(true);
-            $table->boolean(\'enable_login_attempts_limit\')->default(true);
-            $table->integer(\'max_login_attempts\')->default(5);
-            $table->boolean(\'enable_ip_whitelist\')->default(false);
-            $table->json(\'allowed_ips\')->nullable();
-
-            // Backup & Maintenance
-            $table->boolean(\'enable_auto_backup\')->default(false);
-            $table->string(\'backup_frequency\')->default(\'weekly\'); // daily, weekly, monthly
-            $table->boolean(\'enable_maintenance_mode\')->default(false);
-            $table->text(\'maintenance_message\')->nullable();
-
-            // Notifications
-            $table->boolean(\'enable_email_notifications\')->default(true);
-            $table->boolean(\'enable_browser_notifications\')->default(false);
-            $table->boolean(\'enable_slack_notifications\')->default(false);
-            $table->string(\'notification_email\')->nullable();
-
-            // Performance
-            $table->boolean(\'enable_query_optimization\')->default(true);
-            $table->boolean(\'enable_cache_management\')->default(true);
-            $table->boolean(\'enable_database_optimization\')->default(false);
-            $table->string(\'cache_driver\')->default(\'file\'); // file, redis, memcached
-
-            // Customization
-            $table->string(\'admin_logo\')->nullable();
-            $table->string(\'admin_favicon\')->nullable();
-            $table->text(\'custom_admin_css\')->nullable();
-            $table->text(\'custom_admin_js\')->nullable();
-
-            // Metadata
-            $table->boolean(\'is_active\')->default(true);
-            $table->string(\'created_by\')->nullable();
-            $table->string(\'updated_by\')->nullable();
+            // Meta fields
+            $table->string(\'status\')->default(\'active\'); // active, inactive
+            $table->integer(\'order\')->default(0);
             $table->timestamps();
         });
     }

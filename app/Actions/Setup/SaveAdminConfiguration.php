@@ -15,19 +15,20 @@ class SaveAdminConfiguration
         try {
             // Validate input data
             $validator = Validator::make($data, [
-                'admin_primary_color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
-                'admin_secondary_color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
-                'visitor_analytics_enabled' => 'boolean',
-                'query_cache' => 'boolean',
-                'eager_loading' => 'boolean',
-                'asset_optimization' => 'boolean',
-                'cache_duration' => 'required|integer|min:60|max:3600',
-                'pagination_size' => 'required|integer|in:10,25,50,100',
-                'webp_quality' => 'required|integer|min:50|max:100',
-                'max_width' => 'required|integer|min:800|max:4000',
-                'max_height' => 'required|integer|min:600|max:3000',
-                'seo_auto_generate' => 'boolean',
-                'default_description' => 'required|string|max:255',
+                'admin_primary_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+                'admin_secondary_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+                'visitor_analytics_enabled' => 'nullable|boolean',
+                'enable_visitor_tracking' => 'nullable|boolean',
+                'query_cache' => 'nullable|boolean',
+                'eager_loading' => 'nullable|boolean',
+                'asset_optimization' => 'nullable|boolean',
+                'cache_duration' => 'nullable|integer|min:60|max:3600',
+                'pagination_size' => 'nullable|integer|in:10,25,50,100',
+                'webp_quality' => 'nullable|integer|min:50|max:100',
+                'max_width' => 'nullable|integer|min:800|max:4000',
+                'max_height' => 'nullable|integer|min:600|max:3000',
+                'seo_auto_generate' => 'nullable|boolean',
+                'default_description' => 'nullable|string|max:255',
             ]);
 
             if ($validator->fails()) {
@@ -66,6 +67,7 @@ class SaveAdminConfiguration
                 'admin_primary_color' => '#1f2937',
                 'admin_secondary_color' => '#374151',
                 'visitor_analytics_enabled' => false,
+                'enable_visitor_tracking' => false,
                 'query_cache' => true,
                 'eager_loading' => true,
                 'asset_optimization' => true,
@@ -91,7 +93,7 @@ class SaveAdminConfiguration
             }
 
             // Ensure boolean values
-            $booleanFields = ['visitor_analytics_enabled', 'query_cache', 'eager_loading', 'asset_optimization', 'seo_auto_generate'];
+            $booleanFields = ['visitor_analytics_enabled', 'enable_visitor_tracking', 'query_cache', 'eager_loading', 'asset_optimization', 'seo_auto_generate'];
             foreach ($booleanFields as $field) {
                 if (isset($configData[$field])) {
                     $configData[$field] = filter_var($configData[$field], FILTER_VALIDATE_BOOLEAN);
