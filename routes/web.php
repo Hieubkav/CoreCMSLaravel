@@ -53,5 +53,14 @@ if (app()->environment('local')) {
             'message' => 'Cache cleared successfully!'
         ]);
     })->name('dev.clear-cache');
-
 }
+
+/*
+|--------------------------------------------------------------------------
+| Blog Routes
+|--------------------------------------------------------------------------
+| Routes for blog functionality
+*/
+Route::get('/blog', [App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
+Route::get('/blog/category/{slug}', [App\Http\Controllers\BlogController::class, 'category'])->name('blog.category');

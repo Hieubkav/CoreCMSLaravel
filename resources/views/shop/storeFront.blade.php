@@ -58,44 +58,9 @@
         </div>
     </section>
 
-    <!-- Latest Posts Section -->
-    @if(isset($latestPosts) && $latestPosts->isNotEmpty())
-    <section class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Latest Posts</h2>
-                <p class="text-xl text-gray-600">Stay updated with our latest content</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach($latestPosts->take(3) as $post)
-                <article class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
-                    @if($post->thumbnail)
-                    <img src="{{ asset('storage/' . $post->thumbnail) }}" alt="{{ $post->title }}" class="w-full h-48 object-cover">
-                    @else
-                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-                        <i class="fas fa-image text-gray-400 text-3xl"></i>
-                    </div>
-                    @endif
-
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-3 line-clamp-2">{{ $post->title }}</h3>
-                        <p class="text-gray-600 mb-4 line-clamp-3">{!! Str::limit(strip_tags($post->content), 120) !!}</p>
-                        <a href="#" class="text-blue-600 font-semibold hover:text-blue-800 transition">
-                            Read More →
-                        </a>
-                    </div>
-                </article>
-                @endforeach
-            </div>
-
-            <div class="text-center mt-12">
-                <a href="{{ route('filament.admin.pages.dashboard') }}" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
-                    Go to Admin Panel
-                </a>
-            </div>
-        </div>
-    </section>
+    <!-- Blog Section -->
+    @if(class_exists('App\Models\Post'))
+        <x-blog-section :order="1" />
     @endif
 
     <!-- CTA Section -->

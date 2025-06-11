@@ -57,6 +57,12 @@ class SetupUtilities
                 'description' => 'Tùy chỉnh giao diện và tính năng admin panel',
                 'group' => 'core',
                 'step' => 5
+            ],
+            'blog' => [
+                'title' => 'Cấu hình Blog/Bài viết',
+                'description' => 'Thiết lập hệ thống blog, bài viết và danh mục (tùy chọn)',
+                'group' => 'optional',
+                'step' => 6
             ]
         ];
     }

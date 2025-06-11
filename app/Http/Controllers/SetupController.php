@@ -8,6 +8,7 @@ use App\Actions\Setup\Controller\ProcessAdminStep;
 use App\Actions\Setup\Controller\ProcessWebsiteStep;
 use App\Actions\Setup\Controller\ProcessFrontendConfigStep;
 use App\Actions\Setup\Controller\ProcessAdminConfigStep;
+use App\Actions\Setup\Controller\ProcessBlogStep;
 use App\Actions\Setup\Controller\ResetSystem;
 use App\Actions\Setup\Controller\SetupUtilities;
 use App\Actions\Setup\Controller\CompleteSetup;
@@ -79,8 +80,8 @@ class SetupController extends Controller
                     return $this->handleActionResponse(ProcessFrontendConfigStep::handle($request));
                 case 'admin-config':
                     return $this->handleActionResponse(ProcessAdminConfigStep::handle($request));
-
-
+                case 'blog':
+                    return $this->handleActionResponse(ProcessBlogStep::handle($request));
 
                 default:
                     return response()->json(['error' => 'Bước không hợp lệ'], 400);
