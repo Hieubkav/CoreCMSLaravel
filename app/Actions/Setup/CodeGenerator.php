@@ -61,8 +61,7 @@ class CodeGenerator
                 'ManageAdminConfiguration.php',
             ],
             'filament_widgets' => [
-                'VisitorStatsWidget.php',
-                'AnalyticsOverviewWidget.php',
+                'AnalyticsOverviewWidget.php',  // Chỉ 1 widget tổng hợp
             ],
         ],
         'user-roles' => [

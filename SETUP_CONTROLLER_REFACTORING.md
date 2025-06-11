@@ -19,9 +19,8 @@ app/Actions/Setup/Controller/
 ├── ProcessDatabaseStep.php        # Xử lý bước database
 ├── ProcessAdminStep.php           # Xử lý bước tạo admin
 ├── ProcessWebsiteStep.php         # Xử lý bước cấu hình website
-├── ProcessConfigurationSteps.php  # Xử lý các bước cấu hình
-├── ProcessSampleDataStep.php      # Xử lý bước import dữ liệu mẫu
-├── ProcessModuleSteps.php         # Xử lý các bước module
+├── ProcessFrontendConfigStep.php  # Xử lý bước cấu hình frontend
+├── ProcessAdminConfigStep.php     # Xử lý bước cấu hình admin
 ├── ResetSystem.php                # Reset toàn bộ hệ thống
 ├── SetupUtilities.php             # Utilities cho setup
 ├── CompleteSetup.php              # Hoàn thành setup

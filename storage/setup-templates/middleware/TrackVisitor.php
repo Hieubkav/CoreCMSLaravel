@@ -38,7 +38,7 @@ class TrackVisitor
 
             // Configurable tracking interval - có thể điều chỉnh trong .env
             $trackingInterval = env('VISITOR_TRACKING_INTERVAL', 5); // Default 5 giây
-
+            
             // Check xem có visit gần đây không (cùng IP + URL)
             $recentVisit = Visitor::where('ip_address', $ipAddress)
                 ->where('url', $url)

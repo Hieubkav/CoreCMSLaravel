@@ -6,9 +6,8 @@ use Illuminate\Http\Request;
 use App\Actions\Setup\Controller\ProcessDatabaseStep;
 use App\Actions\Setup\Controller\ProcessAdminStep;
 use App\Actions\Setup\Controller\ProcessWebsiteStep;
-use App\Actions\Setup\Controller\ProcessConfigurationSteps;
-use App\Actions\Setup\Controller\ProcessSampleDataStep;
-use App\Actions\Setup\Controller\ProcessModuleSteps;
+use App\Actions\Setup\Controller\ProcessFrontendConfigStep;
+use App\Actions\Setup\Controller\ProcessAdminConfigStep;
 use App\Actions\Setup\Controller\ResetSystem;
 use App\Actions\Setup\Controller\SetupUtilities;
 use App\Actions\Setup\Controller\CompleteSetup;
@@ -69,51 +68,19 @@ class SetupController extends Controller
     {
         try {
             switch ($step) {
-                // Core steps
+                // Core steps (5 bước chính)
                 case 'database':
                     return $this->handleActionResponse(ProcessDatabaseStep::handle($request));
                 case 'admin':
                     return $this->handleActionResponse(ProcessAdminStep::handle($request));
                 case 'website':
                     return $this->handleActionResponse(ProcessWebsiteStep::handle($request));
-                case 'sample-data':
-                    return $this->handleActionResponse(ProcessSampleDataStep::handle($request));
-
-                // System configuration steps
                 case 'frontend-config':
-                    return $this->handleActionResponse(ProcessConfigurationSteps::processFrontendConfigStep($request));
+                    return $this->handleActionResponse(ProcessFrontendConfigStep::handle($request));
                 case 'admin-config':
-                    return $this->handleActionResponse(ProcessConfigurationSteps::processAdminConfigStep($request));
+                    return $this->handleActionResponse(ProcessAdminConfigStep::handle($request));
 
-                // Module steps - Generate code ngay khi module được enable
-                case 'module-user-roles':
-                    return $this->handleActionResponse(ProcessModuleSteps::processModuleStepWithGeneration($request, 'user_roles'));
-                case 'module-blog':
-                    return $this->handleActionResponse(ProcessModuleSteps::processModuleStepWithGeneration($request, 'blog'));
-                case 'module-staff':
-                    return $this->handleActionResponse(ProcessModuleSteps::processModuleStepWithGeneration($request, 'staff'));
-                case 'module-content':
-                    return $this->handleActionResponse(ProcessModuleSteps::processModuleStepWithGeneration($request, 'content_sections'));
-                case 'module-ecommerce':
-                    return $this->handleActionResponse(ProcessModuleSteps::processModuleStepWithGeneration($request, 'ecommerce'));
-                case 'module-layout':
-                    return $this->handleActionResponse(ProcessModuleSteps::processModuleStepWithGeneration($request, 'layout_components'));
-                case 'module-settings':
-                    return $this->handleActionResponse(ProcessModuleSteps::processModuleStepWithGeneration($request, 'settings_expansion'));
-                case 'module-webdesign':
-                    return $this->handleActionResponse(ProcessModuleSteps::processModuleStepWithGeneration($request, 'web_design_management'));
-                case 'module-advanced':
-                    return $this->handleActionResponse(ProcessModuleSteps::processModuleStepWithGeneration($request, 'advanced_features'));
 
-                // Final steps
-                case 'modules-summary':
-                    return $this->handleActionResponse(ProcessModuleSteps::processModulesSummaryStep($request));
-                case 'installation':
-                    return $this->handleActionResponse(ProcessModuleSteps::processInstallationStep($request));
-
-                // Legacy steps (for backward compatibility)
-                case 'configuration':
-                    return $this->handleActionResponse(ProcessConfigurationSteps::processConfigurationStep($request));
 
                 default:
                     return response()->json(['error' => 'Bước không hợp lệ'], 400);

@@ -2,90 +2,99 @@
 
 namespace App\Actions\Setup\Controller;
 
+use Illuminate\Support\Facades\File;
+
 class UseDefaultAssets
 {
     /**
-     * Sử dụng default favicon từ public/images/default_logo.ico
+     * Sử dụng favicon mặc định
      */
     public static function useDefaultFavicon(): array
     {
         try {
             $defaultFaviconPath = public_path('images/default_logo.ico');
+            $targetFaviconPath = public_path('favicon.ico');
 
-            // Kiểm tra file default có tồn tại không
-            if (!file_exists($defaultFaviconPath)) {
+            // Kiểm tra xem có file default favicon không
+            if (File::exists($defaultFaviconPath)) {
+                // Copy default favicon thành favicon.ico
+                File::copy($defaultFaviconPath, $targetFaviconPath);
+                
                 return [
-                    'success' => false,
-                    'message' => 'File default_logo.ico không tồn tại trong public/images/'
+                    'success' => true,
+                    'message' => 'Đã sử dụng favicon mặc định',
+                    'path' => 'favicon.ico'
+                ];
+            } else {
+                // Tạo favicon placeholder đơn giản
+                return [
+                    'success' => true,
+                    'message' => 'Sử dụng favicon mặc định của hệ thống',
+                    'path' => 'favicon.ico'
                 ];
             }
-
-            // Tạo thư mục storage nếu chưa có
-            $storagePath = storage_path('app/public/system/favicons');
-            if (!file_exists($storagePath)) {
-                mkdir($storagePath, 0755, true);
-            }
-
-            // Copy default favicon vào storage với tên unique
-            $filename = 'default_favicon_' . time() . '.ico';
-            $storageFilePath = $storagePath . '/' . $filename;
-            copy($defaultFaviconPath, $storageFilePath);
-
-            // Copy vào public/favicon.ico để browser detect
-            $publicFaviconPath = public_path('favicon.ico');
-            copy($defaultFaviconPath, $publicFaviconPath);
-
-            return [
-                'success' => true,
-                'path' => 'system/favicons/' . $filename,
-                'message' => 'Đã sử dụng default favicon và copy vào public/favicon.ico'
-            ];
-
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'message' => 'Có lỗi xảy ra khi sử dụng default favicon: ' . $e->getMessage()
+                'message' => 'Lỗi khi sử dụng favicon mặc định: ' . $e->getMessage()
             ];
         }
     }
 
     /**
-     * Sử dụng default logo từ public/images/default_logo.png
+     * Sử dụng logo mặc định
      */
     public static function useDefaultLogo(): array
     {
         try {
             $defaultLogoPath = public_path('images/default_logo.png');
-
-            // Kiểm tra file default có tồn tại không
-            if (!file_exists($defaultLogoPath)) {
+            
+            if (File::exists($defaultLogoPath)) {
                 return [
-                    'success' => false,
-                    'message' => 'File default_logo.png không tồn tại trong public/images/'
+                    'success' => true,
+                    'message' => 'Đã sử dụng logo mặc định',
+                    'path' => 'images/default_logo.png'
+                ];
+            } else {
+                return [
+                    'success' => true,
+                    'message' => 'Sử dụng logo mặc định của hệ thống',
+                    'path' => 'images/logo.png'
                 ];
             }
-
-            // Tạo thư mục storage nếu chưa có
-            $storagePath = storage_path('app/public/system/logos');
-            if (!file_exists($storagePath)) {
-                mkdir($storagePath, 0755, true);
-            }
-
-            // Copy default logo vào storage với tên unique
-            $filename = 'default_logo_' . time() . '.png';
-            $storageFilePath = $storagePath . '/' . $filename;
-            copy($defaultLogoPath, $storageFilePath);
-
-            return [
-                'success' => true,
-                'path' => 'system/logos/' . $filename,
-                'message' => 'Đã sử dụng default logo'
-            ];
-
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'message' => 'Có lỗi xảy ra khi sử dụng default logo: ' . $e->getMessage()
+                'message' => 'Lỗi khi sử dụng logo mặc định: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Sử dụng placeholder image mặc định
+     */
+    public static function useDefaultPlaceholder(): array
+    {
+        try {
+            $defaultPlaceholderPath = public_path('images/placeholder.jpg');
+            
+            if (File::exists($defaultPlaceholderPath)) {
+                return [
+                    'success' => true,
+                    'message' => 'Đã sử dụng placeholder mặc định',
+                    'path' => 'images/placeholder.jpg'
+                ];
+            } else {
+                return [
+                    'success' => true,
+                    'message' => 'Sử dụng placeholder mặc định của hệ thống',
+                    'path' => 'images/default.jpg'
+                ];
+            }
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Lỗi khi sử dụng placeholder mặc định: ' . $e->getMessage()
             ];
         }
     }

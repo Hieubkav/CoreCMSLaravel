@@ -53,4 +53,5 @@ if (app()->environment('local')) {
             'message' => 'Cache cleared successfully!'
         ]);
     })->name('dev.clear-cache');
+
 }

@@ -58,7 +58,7 @@ class AdminPanelProvider extends PanelProvider
             ->resources($this->getFilteredResources())
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages([
-                // \App\Filament\Admin\Pages\Dashboard::class,
+                \App\Filament\Admin\Pages\Dashboard::class,
             ])
             ->navigationGroups([
                 NavigationGroup::make()
@@ -82,10 +82,7 @@ class AdminPanelProvider extends PanelProvider
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
-            ->widgets([
-                // \App\Filament\Admin\Widgets\StatsOverviewWidget::class,
-                // \App\Filament\Admin\Widgets\QuickActionsWidget::class,
-            ])
+            ->widgets($this->getFilteredWidgets())
             ->plugins([
                 // FilamentShieldPlugin::make() // Removed - using spatie/laravel-permission directly
             ])
@@ -129,6 +126,31 @@ class AdminPanelProvider extends PanelProvider
                 ')
             )
             ->login();
+    }
+
+    /**
+     * Lấy danh sách widgets (chỉ load khi class tồn tại)
+     */
+    private function getFilteredWidgets(): array
+    {
+        $widgets = [];
+
+        // Danh sách widgets có thể có
+        $availableWidgets = [
+            \App\Filament\Admin\Widgets\AnalyticsOverviewWidget::class,
+            \App\Filament\Admin\Widgets\StatsOverviewWidget::class,
+            \App\Filament\Admin\Widgets\QuickActionsWidget::class,
+            \App\Filament\Admin\Widgets\WebDesignStatsWidget::class,
+        ];
+
+        // Chỉ load widgets khi class tồn tại
+        foreach ($availableWidgets as $widgetClass) {
+            if (class_exists($widgetClass)) {
+                $widgets[] = $widgetClass;
+            }
+        }
+
+        return $widgets;
     }
 
     /**

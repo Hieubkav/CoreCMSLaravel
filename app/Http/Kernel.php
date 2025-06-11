@@ -36,7 +36,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            // \App\Http\Middleware\TrackVisitor::class, // Tạm tắt để tránh lỗi khi không có table visitors
+            \App\Http\Middleware\TrackVisitor::class, // Bật lại để track visitor
             // \App\Http\Middleware\MinifyHtml::class, // Tạm tắt để debug
         ],
 

@@ -50,6 +50,7 @@ return new class extends Migration
             $table->boolean('enable_seo_tools')->default(true);
             $table->boolean('enable_analytics_dashboard')->default(true);
             $table->boolean('enable_visitor_tracking')->default(true);
+            $table->boolean('visitor_analytics_enabled')->default(false);
             $table->boolean('seo_auto_generate')->default(true);
             $table->string('default_description')->default('Powered by Core Laravel Framework');
 
@@ -77,15 +78,29 @@ return new class extends Migration
             $table->boolean('enable_cache_management')->default(true);
             $table->boolean('enable_database_optimization')->default(false);
             $table->string('cache_driver')->default('file'); // file, redis, memcached
+            $table->boolean('query_cache')->default(true);
+            $table->boolean('eager_loading')->default(true);
+            $table->boolean('asset_optimization')->default(false);
+            $table->integer('cache_duration')->default(3600);
+            $table->integer('pagination_size')->default(25);
 
             // Customization
             $table->string('admin_logo')->nullable();
             $table->string('admin_favicon')->nullable();
+            $table->string('admin_primary_color')->default('#dc2626');
+            $table->string('admin_secondary_color')->default('#64748b');
             $table->text('custom_admin_css')->nullable();
             $table->text('custom_admin_js')->nullable();
 
+            // Image Processing
+            $table->integer('webp_quality')->default(80);
+            $table->integer('max_width')->default(1920);
+            $table->integer('max_height')->default(1080);
+
             // Metadata
             $table->boolean('is_active')->default(true);
+            $table->string('status')->default('active'); // active, inactive
+            $table->integer('order')->default(0);
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
             $table->timestamps();

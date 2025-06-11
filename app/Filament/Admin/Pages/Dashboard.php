@@ -2,9 +2,6 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Filament\Admin\Widgets\StatsOverviewWidget;
-use App\Filament\Admin\Widgets\QuickActionsWidget;
-use App\Filament\Admin\Widgets\WebDesignStatsWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
@@ -12,15 +9,35 @@ class Dashboard extends BaseDashboard
     protected static ?string $navigationIcon = 'heroicon-o-home';
     protected static ?string $navigationLabel = 'Bảng điều khiển';
     protected static ?string $title = 'Bảng điều khiển Core Framework';
-    protected static string $view = 'filament.admin.pages.dashboard';
+    // Bỏ custom view để sử dụng Filament widgets system
+    // protected static string $view = 'filament.admin.pages.dashboard';
 
     public function getWidgets(): array
     {
-        return [
-            StatsOverviewWidget::class,
-            WebDesignStatsWidget::class,
-            QuickActionsWidget::class,
+        $widgets = [];
+
+        // Ưu tiên AnalyticsOverviewWidget nếu có (sau khi setup admin-config)
+        if (class_exists('App\\Filament\\Admin\\Widgets\\AnalyticsOverviewWidget')) {
+            $widgets[] = 'App\\Filament\\Admin\\Widgets\\AnalyticsOverviewWidget';
+        } else {
+            // Fallback: sử dụng Filament built-in AccountWidget khi chưa setup xong
+            // Đây là widget an toàn, luôn có sẵn trong Filament
+            $widgets[] = \Filament\Widgets\AccountWidget::class;
+        }
+
+        // Load thêm các widgets khác nếu có
+        $additionalWidgets = [
+            'App\\Filament\\Admin\\Widgets\\StatsOverviewWidget',
+            'App\\Filament\\Admin\\Widgets\\QuickActionsWidget',
         ];
+
+        foreach ($additionalWidgets as $widgetClass) {
+            if (class_exists($widgetClass)) {
+                $widgets[] = $widgetClass;
+            }
+        }
+
+        return $widgets;
     }
 
     public function getColumns(): int | string | array
@@ -45,11 +62,12 @@ class Dashboard extends BaseDashboard
                     \Illuminate\Support\Facades\Cache::forget('recent_activity_query');
                     \Illuminate\Support\Facades\Cache::forget('visitor_realtime_stats');
 
-                    // Clear visitor stats cache
+                    // Clear visitor stats cache (chỉ khi class tồn tại)
                     try {
-                        $visitorService = new \App\Services\VisitorStatsService();
-                        $visitorService->clearCache();
-                    } catch (\Exception $e) {
+                        if (class_exists('App\\Actions\\System\\GetVisitorStats')) {
+                            \App\Actions\System\GetVisitorStats::clearCache();
+                        }
+                    } catch (\Exception) {
                         // Silent fail
                     }
 
@@ -78,13 +96,16 @@ class Dashboard extends BaseDashboard
                 ->modalSubmitActionLabel('Xóa tất cả')
                 ->action(function () {
                     try {
-                        // Xóa tất cả dữ liệu visitors
-                        \App\Models\Visitor::truncate();
+                        // Xóa tất cả dữ liệu visitors (chỉ khi model tồn tại)
+                        if (class_exists('App\\Models\\Visitor')) {
+                            \App\Models\Visitor::truncate();
+                        }
 
                         // Clear cache
                         \Illuminate\Support\Facades\Cache::forget('visitor_realtime_stats');
-                        $visitorService = new \App\Services\VisitorStatsService();
-                        $visitorService->clearCache();
+                        if (class_exists('App\\Actions\\System\\GetVisitorStats')) {
+                            \App\Actions\System\GetVisitorStats::clearCache();
+                        }
 
                         $this->dispatch('$refresh');
 

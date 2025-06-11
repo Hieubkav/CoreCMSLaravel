@@ -33,8 +33,8 @@ class GetVisitorStats
     {
         return Cache::remember('visitor_stats_today_unique', 300, function () {
             try {
-                return DB::table('visitor_logs')
-                    ->whereDate('created_at', today())
+                return DB::table('visitors')
+                    ->whereDate('visited_at', today())
                     ->distinct('ip_address')
                     ->count('ip_address');
             } catch (\Exception) {
@@ -50,8 +50,8 @@ class GetVisitorStats
     {
         return Cache::remember('visitor_stats_today_total', 300, function () {
             try {
-                return DB::table('visitor_logs')
-                    ->whereDate('created_at', today())
+                return DB::table('visitors')
+                    ->whereDate('visited_at', today())
                     ->count();
             } catch (\Exception) {
                 return 0;
@@ -66,7 +66,7 @@ class GetVisitorStats
     {
         return Cache::remember('visitor_stats_total_unique', 3600, function () {
             try {
-                return DB::table('visitor_logs')
+                return DB::table('visitors')
                     ->distinct('ip_address')
                     ->count('ip_address');
             } catch (\Exception) {
@@ -82,7 +82,7 @@ class GetVisitorStats
     {
         return Cache::remember('visitor_stats_total_visits', 3600, function () {
             try {
-                return DB::table('visitor_logs')->count();
+                return DB::table('visitors')->count();
             } catch (\Exception) {
                 return 0;
             }

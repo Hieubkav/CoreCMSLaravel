@@ -13,7 +13,7 @@ class Visitor extends Model
         'ip_address',
         'user_agent',
         'url',
-        'content_id', // Sửa từ course_id thành content_id
+        'content_id', // Generic content ID
         'session_id',
         'visited_at',
     ];
@@ -76,5 +76,30 @@ class Visitor extends Model
     {
         return $query->whereMonth('visited_at', now()->month)
                     ->whereYear('visited_at', now()->year);
+    }
+
+    /**
+     * KISS: Reset tất cả visitor data
+     */
+    public static function resetAll(): int
+    {
+        $count = static::count();
+        \Illuminate\Support\Facades\DB::statement('TRUNCATE TABLE visitors');
+        return $count;
+    }
+
+    /**
+     * KISS: Tạo visitor record đơn giản
+     */
+    public static function track(string $ip, string $userAgent, string $url): self
+    {
+        return static::create([
+            'ip_address' => $ip,
+            'user_agent' => $userAgent,
+            'url' => $url,
+            'content_id' => null,
+            'session_id' => 'simple_' . uniqid(),
+            'visited_at' => now(),
+        ]);
     }
 }
