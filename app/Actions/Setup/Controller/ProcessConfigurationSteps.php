@@ -49,9 +49,16 @@ class ProcessConfigurationSteps
                 // Vẫn lưu vào session để backup
                 session(['frontend_config' => $data]);
 
+                // Sinh code cho Filament page để quản lý frontend configuration
+                $generateResult = \App\Actions\Setup\CodeGenerator::generateForStep('frontend-config');
+
                 $message = 'Đã lưu cấu hình frontend vào bảng frontend_configurations thành công!';
                 if (isset($faviconResult) && $faviconResult['success']) {
                     $message .= ' Favicon đã được upload và copy vào public/favicon.ico.';
+                }
+
+                if ($generateResult['success']) {
+                    $message .= ' Đã tạo Filament Frontend Configuration page để quản lý.';
                 }
 
                 return [
@@ -59,7 +66,8 @@ class ProcessConfigurationSteps
                     'message' => $message,
                     'config_id' => $result['config']->id ?? null,
                     'table_created' => true,
-                    'favicon_uploaded' => isset($faviconResult) && $faviconResult['success']
+                    'favicon_uploaded' => isset($faviconResult) && $faviconResult['success'],
+                    'generate_result' => $generateResult
                 ];
             } else {
                 return [

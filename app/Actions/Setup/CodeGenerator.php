@@ -46,6 +46,14 @@ class CodeGenerator
             'filament_pages' => [],
             'filament_widgets' => [],
         ],
+        'frontend-config' => [
+            'models' => [],
+            'filament_resources' => [],
+            'filament_pages' => [
+                'ManageFrontendConfiguration.php',
+            ],
+            'filament_widgets' => [],
+        ],
         'user-roles' => [
             'models' => [
                 // User.php là core model, không sinh
@@ -644,14 +652,48 @@ class CodeGenerator
             if (File::exists($templateFilePath)) {
                 File::copy($templateFilePath, $targetPath . '/' . $page);
                 $generatedFiles[] = $page;
+
+                // Sinh view file tương ứng nếu có template
+                self::generateFilamentPageView($page, $templatesPath, $generatedFiles);
             }
         }
 
         $results['filament_pages'] = [
             'status' => 'success',
-            'message' => 'Đã sinh ' . count($generatedFiles) . ' Filament pages',
+            'message' => 'Đã sinh ' . count($generatedFiles) . ' Filament pages và views',
             'files' => $generatedFiles
         ];
+    }
+
+    /**
+     * Sinh view file cho Filament page
+     */
+    private static function generateFilamentPageView(string $page, string $templatesPath, array &$generatedFiles): void
+    {
+        // Chuyển đổi tên page thành view name
+        $viewName = self::convertPageNameToViewName($page);
+        $templateViewPath = $templatesPath . '/views/filament/admin/pages/' . $viewName . '.blade.php';
+
+        if (File::exists($templateViewPath)) {
+            $targetViewPath = resource_path('views/filament/admin/pages');
+
+            if (!File::exists($targetViewPath)) {
+                File::makeDirectory($targetViewPath, 0755, true);
+            }
+
+            File::copy($templateViewPath, $targetViewPath . '/' . $viewName . '.blade.php');
+            $generatedFiles[] = 'views/' . $viewName . '.blade.php';
+        }
+    }
+
+    /**
+     * Chuyển đổi tên page thành view name
+     */
+    private static function convertPageNameToViewName(string $pageName): string
+    {
+        // ManageFrontendConfiguration.php -> manage-frontend-configuration
+        $name = str_replace('.php', '', $pageName);
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $name));
     }
 
     /**
