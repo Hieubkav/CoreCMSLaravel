@@ -25,6 +25,7 @@ class ProcessBlogStep
             // Validate input
             $validated = $request->validate([
                 'enable_blog' => 'required|boolean',
+                'create_sample_data' => 'boolean',
                 'blog_title' => 'required_if:enable_blog,true|string|max:255',
                 'blog_description' => 'nullable|string|max:500',
                 'default_post_type' => 'required_if:enable_blog,true|string|in:tin_tuc,dich_vu,trang_don',
@@ -37,7 +38,7 @@ class ProcessBlogStep
                 return [
                     'success' => true,
                     'message' => 'Blog không được kích hoạt.',
-                    'redirect' => route('setup.complete')
+                    'redirect' => route('setup.index') . '?completed=1&message=' . urlencode('Setup hoàn tất! Blog đã được bỏ qua.')
                 ];
             }
 
@@ -48,7 +49,7 @@ class ProcessBlogStep
                 return [
                     'success' => true,
                     'message' => 'Cấu hình blog thành công!',
-                    'redirect' => route('setup.complete'),
+                    'redirect' => route('setup.index') . '?completed=1&message=' . urlencode('🎉 Setup hoàn tất! Blog module đã được cài đặt thành công.'),
                     'data' => $result['data'] ?? []
                 ];
             } else {

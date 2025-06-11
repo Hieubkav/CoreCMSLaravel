@@ -57,11 +57,11 @@ class PostObserver
 
         // Handle file cleanup for changed images
         if ($post->isDirty('thumbnail')) {
-            $this->handleFileCleanup($post->getOriginal('thumbnail'));
+            $this->deleteFileIfExists($post->getOriginal('thumbnail'));
         }
 
         if ($post->isDirty('og_image')) {
-            $this->handleFileCleanup($post->getOriginal('og_image'));
+            $this->deleteFileIfExists($post->getOriginal('og_image'));
         }
     }
 
@@ -87,12 +87,12 @@ class PostObserver
     public function deleted(Post $post): void
     {
         // Clean up associated files
-        $this->handleFileCleanup($post->thumbnail);
-        $this->handleFileCleanup($post->og_image);
+        $this->deleteFileIfExists($post->thumbnail);
+        $this->deleteFileIfExists($post->og_image);
 
         // Delete associated images
         $post->images()->each(function ($image) {
-            $this->handleFileCleanup($image->image_path);
+            $this->deleteFileIfExists($image->image_path);
             $image->delete();
         });
 

@@ -25,6 +25,44 @@
         </div>
         @endif
 
+        <!-- Success Message -->
+        @if(request('completed') && request('message'))
+        <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-green-800 mb-2">
+                        Setup Hoàn Thành!
+                    </h3>
+                    <p class="text-green-700">
+                        {{ request('message') }}
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-3">
+                        <a href="{{ route('filament.admin.pages.dashboard') }}"
+                           class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-user-shield mr-2"></i>
+                            Vào Admin Panel
+                        </a>
+                        <a href="{{ route('storeFront') }}"
+                           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-home mr-2"></i>
+                            Xem Website
+                        </a>
+                        @if(isset($isSetupCompleted) && $isSetupCompleted)
+                        <a href="/blog"
+                           class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+                            <i class="fas fa-blog mr-2"></i>
+                            Xem Blog
+                        </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- Header -->
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-20 h-20 bg-red-100 rounded-full mb-6">

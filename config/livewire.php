@@ -157,5 +157,4 @@ return [
     */
 
     'pagination_theme' => 'tailwind',
-    // 'asset_url' => env('ASSET_URL', null),
 ];

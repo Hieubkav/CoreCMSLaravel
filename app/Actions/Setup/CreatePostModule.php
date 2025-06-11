@@ -49,6 +49,12 @@ class CreatePostModule
             // 11. Cập nhật ViewServiceProvider
             self::updateViewServiceProvider($results);
 
+            // 12. Tạo và chạy seeders nếu được yêu cầu
+            if (isset($config['create_sample_data']) && $config['create_sample_data']) {
+                self::createSeeders($results);
+                self::runSeeders($results);
+            }
+
             return [
                 'success' => true,
                 'message' => 'Tạo module blog thành công!',
@@ -207,14 +213,35 @@ class CreatePostModule
      */
     private static function createLivewireComponents(array &$results): void
     {
-        // Tạo Livewire component cho post filter
-        try {
-            Artisan::call('make:livewire', [
-                'name' => 'PostFilter'
-            ]);
-            $results['livewire'][] = 'PostFilter component created';
-        } catch (\Exception $e) {
-            $results['livewire_errors'][] = 'Failed to create PostFilter: ' . $e->getMessage();
+        $templatesPath = base_path('storage/setup-templates/livewire');
+        $livewirePath = base_path('app/Livewire');
+        $livewireViewsPath = base_path('resources/views/livewire');
+
+        if (!File::exists($livewirePath)) {
+            File::makeDirectory($livewirePath, 0755, true);
+        }
+
+        if (!File::exists($livewireViewsPath)) {
+            File::makeDirectory($livewireViewsPath, 0755, true);
+        }
+
+        // Copy BlogIndex Livewire component
+        $templateFile = $templatesPath . '/BlogIndex.php';
+        $targetFile = $livewirePath . '/BlogIndex.php';
+
+        if (File::exists($templateFile)) {
+            File::copy($templateFile, $targetFile);
+            $results['livewire'][] = 'BlogIndex component created';
+        }
+
+        // Copy BlogIndex view
+        $templateViewPath = base_path('storage/setup-templates/views/livewire');
+        $templateViewFile = $templateViewPath . '/blog-index.blade.php';
+        $targetViewFile = $livewireViewsPath . '/blog-index.blade.php';
+
+        if (File::exists($templateViewFile)) {
+            File::copy($templateViewFile, $targetViewFile);
+            $results['livewire_views'][] = 'blog-index.blade.php view created';
         }
     }
 
@@ -229,9 +256,11 @@ class CreatePostModule
 |--------------------------------------------------------------------------
 | Blog Routes
 |--------------------------------------------------------------------------
-| Routes for blog functionality
+| Routes for blog functionality with Livewire
 */
-Route::get('/blog', [App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog', function() {
+    return view('blog.index');
+})->name('blog.index');
 Route::get('/blog/{slug}', [App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 Route::get('/blog/category/{slug}', [App\Http\Controllers\BlogController::class, 'category'])->name('blog.category');
 ";
@@ -266,12 +295,14 @@ Route::get('/blog/category/{slug}', [App\Http\Controllers\BlogController::class,
         $templatesPath = base_path('storage/setup-templates/controllers');
         $controllersPath = base_path('app/Http/Controllers');
 
-        // Tạo BlogController từ template hoặc copy từ file đã tạo
-        $controllerFile = $controllersPath . '/BlogController.php';
-        if (File::exists($controllerFile)) {
-            $results['controllers'][] = 'BlogController already exists';
+        $templateFile = $templatesPath . '/BlogController.php';
+        $targetFile = $controllersPath . '/BlogController.php';
+
+        if (File::exists($templateFile)) {
+            File::copy($templateFile, $targetFile);
+            $results['controllers'][] = 'BlogController created from template';
         } else {
-            $results['controllers'][] = 'BlogController needs to be created manually';
+            $results['controllers'][] = 'BlogController template not found';
         }
     }
 
@@ -291,12 +322,50 @@ Route::get('/blog/category/{slug}', [App\Http\Controllers\BlogController::class,
         $views = ['index.blade.php', 'show.blade.php', 'category.blade.php'];
 
         foreach ($views as $view) {
-            $viewFile = $viewsPath . '/' . $view;
-            if (File::exists($viewFile)) {
-                $results['views'][] = "Blog view {$view} already exists";
+            $templateFile = $templatesPath . '/' . $view;
+            $targetFile = $viewsPath . '/' . $view;
+
+            if (File::exists($templateFile)) {
+                File::copy($templateFile, $targetFile);
+                $results['views'][] = "Blog view {$view} created from template";
             } else {
-                $results['views'][] = "Blog view {$view} needs to be created manually";
+                $results['views'][] = "Blog view template {$view} not found";
             }
+        }
+    }
+
+    /**
+     * Tạo seeders
+     */
+    private static function createSeeders(array &$results): void
+    {
+        $templatesPath = base_path('storage/setup-templates/seeders');
+        $seedersPath = base_path('database/seeders');
+
+        $templateFile = $templatesPath . '/BlogSeeder.php';
+        $targetFile = $seedersPath . '/BlogSeeder.php';
+
+        if (File::exists($templateFile)) {
+            File::copy($templateFile, $targetFile);
+            $results['seeders'][] = 'BlogSeeder created from template';
+        } else {
+            $results['seeders'][] = 'BlogSeeder template not found';
+        }
+    }
+
+    /**
+     * Chạy seeders
+     */
+    private static function runSeeders(array &$results): void
+    {
+        try {
+            Artisan::call('db:seed', [
+                '--class' => 'BlogSeeder',
+                '--force' => true
+            ]);
+            $results['seeders_run'][] = 'BlogSeeder executed successfully';
+        } catch (\Exception $e) {
+            $results['seeders_errors'][] = 'Failed to run BlogSeeder: ' . $e->getMessage();
         }
     }
 

@@ -59,8 +59,10 @@ if (app()->environment('local')) {
 |--------------------------------------------------------------------------
 | Blog Routes
 |--------------------------------------------------------------------------
-| Routes for blog functionality
+| Routes for blog functionality with Livewire
 */
-Route::get('/blog', [App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog', function() {
+    return view('blog.index');
+})->name('blog.index');
 Route::get('/blog/{slug}', [App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 Route::get('/blog/category/{slug}', [App\Http\Controllers\BlogController::class, 'category'])->name('blog.category');

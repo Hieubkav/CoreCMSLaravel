@@ -131,12 +131,41 @@
 
             </div>
 
+            <!-- Create Sample Data Option -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <div class="flex items-start">
+                    <div class="flex items-center h-5">
+                        <input id="create_sample_data"
+                               name="create_sample_data"
+                               type="checkbox"
+                               value="1"
+                               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                    </div>
+                    <div class="ml-3">
+                        <label for="create_sample_data" class="text-sm font-medium text-blue-800">
+                            Tạo dữ liệu mẫu cho blog
+                        </label>
+                        <p class="text-sm text-blue-700 mt-1">
+                            Tạo 3 danh mục và 6 bài viết mẫu để bạn có thể xem trước giao diện blog.
+                        </p>
+                        <div class="mt-2 text-xs text-blue-600">
+                            <strong>Sẽ tạo:</strong>
+                            <ul class="list-disc list-inside mt-1 space-y-1">
+                                <li>3 danh mục: Tin tức công nghệ, Dịch vụ web, Hướng dẫn</li>
+                                <li>6 bài viết với nội dung đầy đủ và đa dạng</li>
+                                <li>Dữ liệu SEO-friendly và responsive</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Skip Option -->
             <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <div class="flex items-center">
-                    <input type="checkbox" 
-                           name="skip_blog" 
-                           id="skip_blog" 
+                    <input type="checkbox"
+                           name="skip_blog"
+                           id="skip_blog"
                            class="w-4 h-4 text-yellow-600 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500">
                     <label for="skip_blog" class="ml-2 text-sm text-gray-700">
                         <strong>Bỏ qua bước này</strong> - Tôi sẽ cấu hình blog sau
@@ -184,6 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const enableBlogCheckbox = document.getElementById('enable_blog');
     const blogConfig = document.getElementById('blogConfig');
     const skipBlogCheckbox = document.getElementById('skip_blog');
+    const createSampleDataCheckbox = document.getElementById('create_sample_data');
     const form = document.getElementById('blogForm');
     const submitBtn = document.getElementById('submitBtn');
     const submitText = document.getElementById('submitText');
@@ -204,6 +234,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (this.checked) {
             enableBlogCheckbox.checked = false;
             blogConfig.style.display = 'none';
+            createSampleDataCheckbox.checked = false;
+            createSampleDataCheckbox.disabled = true;
+        } else {
+            createSampleDataCheckbox.disabled = false;
+        }
+    });
+
+    // Handle sample data option
+    createSampleDataCheckbox.addEventListener('change', function() {
+        if (this.checked && skipBlogCheckbox.checked) {
+            skipBlogCheckbox.checked = false;
+            createSampleDataCheckbox.disabled = false;
         }
     });
 
@@ -220,10 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         fetch('{{ route("setup.process", "blog") }}', {
             method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
+            body: formData
         })
         .then(response => response.json())
         .then(data => {

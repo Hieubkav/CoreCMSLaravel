@@ -75,16 +75,16 @@ class PostResource extends Resource
 
                                 Forms\Components\Grid::make(2)
                                     ->schema([
-                                        Forms\Components\FileUpload::make('thumbnail')
-                                            ->label('Ảnh đại diện')
-                                            ->image()
-                                            ->directory('posts/thumbnails')
-                                            ->imageEditor()
-                                            ->imageEditorAspectRatios([
-                                                '16:9',
-                                                '4:3',
-                                                '1:1',
-                                            ]),
+                                        \App\Actions\File\CreateFilamentImageUpload::run(
+                                            field: 'thumbnail',
+                                            label: 'Ảnh đại diện',
+                                            directory: 'posts/thumbnails',
+                                            maxWidth: 1200,
+                                            maxHeight: 630,
+                                            maxSize: 5120,
+                                            helperText: 'Ảnh đại diện bài viết, tỷ lệ 16:9 khuyến nghị. Tối đa 5MB.',
+                                            aspectRatios: ['16:9', '4:3', '1:1']
+                                        ),
 
                                         Forms\Components\DateTimePicker::make('published_at')
                                             ->label('Thời gian xuất bản')
@@ -126,11 +126,16 @@ class PostResource extends Resource
                                     ->rows(3)
                                     ->helperText('Để trống để tự động tạo từ nội dung'),
 
-                                Forms\Components\FileUpload::make('og_image')
-                                    ->label('OG Image')
-                                    ->image()
-                                    ->directory('posts/og-images')
-                                    ->helperText('Ảnh hiển thị khi share trên mạng xã hội'),
+                                \App\Actions\File\CreateFilamentImageUpload::run(
+                                    field: 'og_image',
+                                    label: 'OG Image',
+                                    directory: 'posts/og-images',
+                                    maxWidth: 1200,
+                                    maxHeight: 630,
+                                    maxSize: 3072,
+                                    helperText: 'Ảnh hiển thị khi share trên mạng xã hội. Tỷ lệ 16:9 khuyến nghị.',
+                                    aspectRatios: ['16:9', '4:3']
+                                ),
                             ]),
                     ])
                     ->columnSpanFull(),
