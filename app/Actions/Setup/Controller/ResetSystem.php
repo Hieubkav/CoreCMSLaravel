@@ -577,6 +577,7 @@ Route::prefix(\'setup\')->name(\'setup.\')->group(function () {
     Route::post(\'/process/{step}\', [SetupController::class, \'process\'])->name(\'process\');
     Route::post(\'/complete\', [SetupController::class, \'complete\'])->name(\'complete\');
     Route::post(\'/reset\', [SetupController::class, \'reset\'])->name(\'reset\')->withoutMiddleware([\'csrf\']);
+    Route::post(\'/reset/{step}\', [SetupController::class, \'resetStep\'])->name(\'reset.step\')->withoutMiddleware([\'csrf\']);
 });
 
 /*

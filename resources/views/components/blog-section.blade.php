@@ -1,28 +1,47 @@
 @props(['order' => 1])
 
 @php
-    // Lấy bài viết nổi bật (is_hot = true) và bài viết mới nhất
-    $hotPost = \App\Models\Post::where('status', 'active')
-        ->where('is_hot', true)
-        ->whereNotNull('published_at')
-        ->where('published_at', '<=', now())
-        ->orderBy('published_at', 'desc')
-        ->first();
-    
-    $recentPosts = \App\Models\Post::where('status', 'active')
-        ->whereNotNull('published_at')
-        ->where('published_at', '<=', now())
-        ->when($hotPost, function($query) use ($hotPost) {
-            return $query->where('id', '!=', $hotPost->id);
-        })
-        ->orderBy('published_at', 'desc')
-        ->limit(3)
-        ->get();
-        
-    // Nếu không có bài viết nổi bật, lấy bài viết mới nhất làm bài chính
-    if (!$hotPost && $recentPosts->count() > 0) {
-        $hotPost = $recentPosts->first();
-        $recentPosts = $recentPosts->skip(1);
+    $hotPost = null;
+    $recentPosts = collect();
+    $globalSettings = null;
+
+    // Kiểm tra xem model Post có tồn tại không
+    if (class_exists('App\Models\Post')) {
+        try {
+            // Lấy bài viết nổi bật (is_hot = true) và bài viết mới nhất
+            $hotPost = \App\Models\Post::where('status', 'active')
+                ->where('is_hot', true)
+                ->whereNotNull('published_at')
+                ->where('published_at', '<=', now())
+                ->orderBy('published_at', 'desc')
+                ->first();
+
+            $recentPosts = \App\Models\Post::where('status', 'active')
+                ->whereNotNull('published_at')
+                ->where('published_at', '<=', now())
+                ->when($hotPost, function($query) use ($hotPost) {
+                    return $query->where('id', '!=', $hotPost->id);
+                })
+                ->orderBy('published_at', 'desc')
+                ->limit(3)
+                ->get();
+
+            // Nếu không có bài viết nổi bật, lấy bài viết mới nhất làm bài chính
+            if (!$hotPost && $recentPosts->count() > 0) {
+                $hotPost = $recentPosts->first();
+                $recentPosts = $recentPosts->skip(1);
+            }
+        } catch (\Exception $e) {
+            $hotPost = null;
+            $recentPosts = collect();
+        }
+    }
+
+    // Lấy global settings
+    try {
+        $globalSettings = \App\Models\Setting::first();
+    } catch (\Exception $e) {
+        $globalSettings = null;
     }
 @endphp
 
@@ -62,9 +81,10 @@
                     <div class="p-6">
                         <div class="flex items-center text-sm text-gray-500 mb-3">
                             @if($hotPost->category)
-                                <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-md mr-3">
+                                <a href="{{ route('blog.category', $hotPost->category->slug) }}"
+                                   class="bg-gray-100 text-gray-700 px-2 py-1 rounded-md mr-3 hover:bg-gray-200 transition-colors">
                                     {{ $hotPost->category->name }}
-                                </span>
+                                </a>
                             @endif
                             <time datetime="{{ $hotPost->published_at->format('Y-m-d') }}">
                                 {{ $hotPost->published_at->format('d/m/Y') }}
@@ -72,7 +92,7 @@
                         </div>
                         
                         <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                            <a href="{{ route('blog.show', $hotPost->slug) }}" 
+                            <a href="{{ route('blog.show', $hotPost->slug) }}"
                                class="hover:text-red-600 transition-colors">
                                 {{ $hotPost->title }}
                             </a>
@@ -83,7 +103,7 @@
                         </p>
                         
                         <div class="flex items-center justify-between">
-                            <a href="{{ route('blog.show', $hotPost->slug) }}" 
+                            <a href="{{ route('blog.show', $hotPost->slug) }}"
                                class="inline-flex items-center text-red-600 hover:text-red-700 font-medium">
                                 Đọc thêm
                                 <i class="fas fa-arrow-right ml-2"></i>
@@ -116,9 +136,10 @@
                             <div class="flex-1 p-4">
                                 <div class="flex items-center text-xs text-gray-500 mb-2">
                                     @if($post->category)
-                                        <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs mr-2">
+                                        <a href="{{ route('blog.category', $post->category->slug) }}"
+                                           class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs mr-2 hover:bg-gray-200 transition-colors">
                                             {{ $post->category->name }}
-                                        </span>
+                                        </a>
                                     @endif
                                     <time datetime="{{ $post->published_at->format('Y-m-d') }}">
                                         {{ $post->published_at->format('d/m/Y') }}
@@ -126,7 +147,7 @@
                                 </div>
                                 
                                 <h4 class="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm">
-                                    <a href="{{ route('blog.show', $post->slug) }}" 
+                                    <a href="{{ route('blog.show', $post->slug) }}"
                                        class="hover:text-red-600 transition-colors">
                                         {{ $post->title }}
                                     </a>
@@ -137,7 +158,7 @@
                                 </p>
                                 
                                 <div class="flex items-center justify-between">
-                                    <a href="{{ route('blog.show', $post->slug) }}" 
+                                    <a href="{{ route('blog.show', $post->slug) }}"
                                        class="text-red-600 hover:text-red-700 text-xs font-medium">
                                         Đọc thêm →
                                     </a>
@@ -157,7 +178,7 @@
 
         <!-- View All Button -->
         <div class="text-center mt-12">
-            <a href="{{ route('blog.index') }}" 
+            <a href="{{ route('blog.index') }}"
                class="inline-flex items-center px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors">
                 Xem tất cả bài viết
                 <i class="fas fa-arrow-right ml-2"></i>

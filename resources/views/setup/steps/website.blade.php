@@ -4,69 +4,71 @@
 @section('description', 'Thiết lập thông tin đầy đủ cho website của bạn')
 
 @section('content')
-<!-- Header Section - Compact -->
-<div class="text-center mb-8">
-    <div class="w-16 h-16 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-        <i class="fas fa-globe text-2xl text-red-600"></i>
+<div class="max-w-7xl mx-auto">
+    <!-- Header Section - Compact -->
+    <div class="text-center mb-12">
+        <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-soft">
+            <i class="fas fa-globe text-2xl text-blue-600"></i>
+        </div>
+        <h1 class="text-3xl font-light text-slate-800 mb-4 tracking-tight">Cấu hình Website</h1>
+        <p class="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            Thiết lập thông tin cơ bản cho website của bạn. Tất cả thông tin này có thể thay đổi sau trong admin panel.
+        </p>
     </div>
-    <h1 class="text-2xl lg:text-3xl font-light text-gray-900 mb-3">Cấu hình Website</h1>
-    <p class="text-base text-gray-600 max-w-2xl mx-auto">
-        Thiết lập thông tin cơ bản cho website của bạn. Tất cả thông tin này có thể thay đổi sau trong admin panel.
-    </p>
-</div>
 
-<!-- Website Form - Ultra Wide & Compact -->
-<div class="max-w-[120rem] mx-auto">
+    <!-- Website Form -->
     <form id="website-form" onsubmit="configureWebsite(event)">
         <div class="space-y-8">
 
             <!-- Basic Information Section -->
-            <div class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-100">
-                <div class="mb-6">
-                    <h3 class="text-xl font-light text-gray-900 mb-2 flex items-center">
-                        <div class="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center mr-3">
-                            <i class="fas fa-info-circle text-blue-600 text-sm"></i>
+            <div class="glass-card rounded-2xl p-8 shadow-soft border border-slate-100">
+                <div class="mb-8">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-info-circle text-blue-600"></i>
                         </div>
-                        Thông tin cơ bản
-                    </h3>
-                    <p class="text-gray-600 ml-10 text-sm">Thông tin chính về website của bạn</p>
+                        <div>
+                            <h3 class="text-xl font-semibold text-slate-800">Thông tin cơ bản</h3>
+                            <p class="text-slate-600 text-sm">Thông tin chính về website của bạn</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                     <!-- Site Name -->
                     <div>
-                        <label for="site_name" class="block text-sm font-medium text-gray-900 mb-2">
+                        <label for="site_name" class="block text-sm font-semibold text-slate-800 mb-3">
                             Tên Website <span class="text-red-500">*</span>
                         </label>
                         <input type="text"
                                id="site_name"
                                name="site_name"
                                required
-                               class="w-full px-4 py-3 text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-gray-50 focus:bg-white"
+                               class="w-full px-4 py-3 text-base border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-slate-50 focus:bg-white shadow-soft"
                                placeholder="Ví dụ: Công ty ABC">
-                        <div id="site_name-error" class="text-red-600 text-sm mt-1 hidden"></div>
+                        <div id="site_name-error" class="text-red-600 text-sm mt-2 hidden"></div>
                     </div>
 
                     <!-- Slogan -->
                     <div>
-                        <label for="slogan" class="block text-sm font-medium text-gray-900 mb-2">
+                        <label for="slogan" class="block text-sm font-semibold text-slate-800 mb-3">
                             Slogan
                         </label>
                         <input type="text"
                                id="slogan"
                                name="slogan"
-                               class="w-full px-4 py-3 text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-gray-50 focus:bg-white"
+                               class="w-full px-4 py-3 text-base border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-slate-50 focus:bg-white shadow-soft"
                                placeholder="Slogan ngắn gọn của website">
                     </div>
 
                     <!-- Footer Description -->
                     <div class="xl:col-span-1">
-                        <label for="footer_description" class="block text-sm font-medium text-gray-900 mb-2">
+                        <label for="footer_description" class="block text-sm font-semibold text-slate-800 mb-3">
                             Mô tả Footer
                         </label>
                         <textarea id="footer_description"
                                   name="footer_description"
                                   rows="3"
-                                  class="w-full px-4 py-3 text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-gray-50 focus:bg-white resize-none"
+                                  class="w-full px-4 py-3 text-base border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-slate-50 focus:bg-white resize-none shadow-soft"
                                   placeholder="Mô tả ngắn gọn hiển thị ở footer website"></textarea>
                     </div>
                 </div>

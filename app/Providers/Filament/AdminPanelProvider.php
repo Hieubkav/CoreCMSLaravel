@@ -135,12 +135,12 @@ class AdminPanelProvider extends PanelProvider
     {
         $widgets = [];
 
-        // Danh sách widgets có thể có
+        // Danh sách widgets có thể có (dùng string để tránh autoload)
         $availableWidgets = [
-            \App\Filament\Admin\Widgets\AnalyticsOverviewWidget::class,
-            \App\Filament\Admin\Widgets\StatsOverviewWidget::class,
-            \App\Filament\Admin\Widgets\QuickActionsWidget::class,
-            \App\Filament\Admin\Widgets\WebDesignStatsWidget::class,
+            'App\\Filament\\Admin\\Widgets\\AnalyticsOverviewWidget',
+            'App\\Filament\\Admin\\Widgets\\StatsOverviewWidget',
+            'App\\Filament\\Admin\\Widgets\\QuickActionsWidget',
+            'App\\Filament\\Admin\\Widgets\\WebDesignStatsWidget',
         ];
 
         // Chỉ load widgets khi class tồn tại
@@ -188,12 +188,17 @@ class AdminPanelProvider extends PanelProvider
             }
         }
 
-        // 3. Load resources từ Admin/Resources (luôn load)
+        // 3. Load resources từ Admin/Resources (chỉ load file .php, không load .disabled)
         $adminPath = app_path('Filament/Admin/Resources');
         if (is_dir($adminPath)) {
             $adminFiles = glob($adminPath . '/*Resource.php');
             if (is_array($adminFiles)) {
                 foreach ($adminFiles as $file) {
+                    // Skip disabled files
+                    if (strpos($file, '.disabled') !== false) {
+                        continue;
+                    }
+
                     $className = 'App\\Filament\\Admin\\Resources\\' . basename($file, '.php');
                     if (class_exists($className)) {
                         $resources[] = $className;

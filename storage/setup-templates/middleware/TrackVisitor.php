@@ -17,8 +17,12 @@ class TrackVisitor
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Chỉ track GET requests và không track admin routes
-        if ($request->isMethod('GET') && !$request->is('admin/*') && !$request->is('api/*')) {
+        // Chỉ track GET requests và không track admin routes, API routes, và Livewire requests
+        if ($request->isMethod('GET') &&
+            !$request->is('admin/*') &&
+            !$request->is('api/*') &&
+            !$request->is('livewire/*') &&
+            !$request->header('X-Livewire')) {
             $this->trackVisitor($request);
         }
 

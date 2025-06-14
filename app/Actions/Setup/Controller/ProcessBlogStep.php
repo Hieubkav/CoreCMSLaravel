@@ -3,7 +3,9 @@
 namespace App\Actions\Setup\Controller;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Actions\Setup\CreatePostModule;
+use App\Actions\Setup\Controller\SetupUtilities;
 
 class ProcessBlogStep
 {
@@ -18,27 +20,43 @@ class ProcessBlogStep
                 return [
                     'success' => true,
                     'message' => 'Đã bỏ qua cấu hình blog.',
-                    'redirect' => route('setup.complete')
+                    'next_step' => self::getNextStep()
                 ];
             }
 
             // Validate input
-            $validated = $request->validate([
-                'enable_blog' => 'required|boolean',
-                'create_sample_data' => 'boolean',
-                'blog_title' => 'required_if:enable_blog,true|string|max:255',
+            $validator = Validator::make($request->all(), [
+                'enable_blog' => 'nullable|boolean',
+                'create_sample_data' => 'nullable|boolean',
+                'blog_title' => 'required_if:enable_blog,1|string|max:255',
                 'blog_description' => 'nullable|string|max:500',
-                'default_post_type' => 'required_if:enable_blog,true|string|in:tin_tuc,dich_vu,trang_don',
-                'enable_categories' => 'boolean',
-                'enable_featured_posts' => 'boolean',
-                'posts_per_page' => 'integer|min:1|max:50',
+                'default_post_type' => 'required_if:enable_blog,1|string|in:tin_tuc,dich_vu,trang_don',
+                'enable_categories' => 'nullable|boolean',
+                'enable_featured_posts' => 'nullable|boolean',
+                'posts_per_page' => 'nullable|integer|min:1|max:50',
             ]);
+
+            if ($validator->fails()) {
+                return [
+                    'success' => false,
+                    'message' => 'Dữ liệu không hợp lệ: ' . $validator->errors()->first(),
+                    'errors' => $validator->errors()->toArray()
+                ];
+            }
+
+            $validated = $validator->validated();
+
+            // Convert checkbox values to boolean
+            $validated['enable_blog'] = $request->has('enable_blog') && $request->enable_blog == '1';
+            $validated['create_sample_data'] = $request->has('create_sample_data') && $request->create_sample_data == '1';
+            $validated['enable_categories'] = $request->has('enable_categories') && $request->enable_categories == '1';
+            $validated['enable_featured_posts'] = $request->has('enable_featured_posts') && $request->enable_featured_posts == '1';
 
             if (!$validated['enable_blog']) {
                 return [
                     'success' => true,
                     'message' => 'Blog không được kích hoạt.',
-                    'redirect' => route('setup.index') . '?completed=1&message=' . urlencode('Setup hoàn tất! Blog đã được bỏ qua.')
+                    'next_step' => self::getNextStep()
                 ];
             }
 
@@ -49,7 +67,7 @@ class ProcessBlogStep
                 return [
                     'success' => true,
                     'message' => 'Cấu hình blog thành công!',
-                    'redirect' => route('setup.index') . '?completed=1&message=' . urlencode('🎉 Setup hoàn tất! Blog module đã được cài đặt thành công.'),
+                    'next_step' => self::getNextStep(),
                     'data' => $result['data'] ?? []
                 ];
             } else {
@@ -67,5 +85,14 @@ class ProcessBlogStep
                 'error' => $e->getMessage()
             ];
         }
+    }
+
+    /**
+     * Lấy bước tiếp theo sau blog
+     */
+    private static function getNextStep(): string
+    {
+        // Sử dụng SetupUtilities để lấy next step theo đúng flow
+        return SetupUtilities::getNextStep('blog') ?? 'complete';
     }
 }

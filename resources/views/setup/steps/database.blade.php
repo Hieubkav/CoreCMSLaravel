@@ -4,100 +4,118 @@
 @section('description', 'Kiểm tra kết nối database và tạo bảng dữ liệu')
 
 @section('content')
-<div class="text-center mb-8">
-    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="fas fa-database text-2xl text-blue-600"></i>
-    </div>
-    <h2 class="text-2xl font-bold text-gray-900 mb-2">Cấu hình Database</h2>
-    <p class="text-gray-600">
-        Chúng tôi sẽ kiểm tra kết nối database và tạo các bảng cần thiết cho hệ thống.
-    </p>
-</div>
-
-<!-- Database Info -->
-<div class="bg-gray-50 rounded-lg p-6 mb-6">
-    <h3 class="font-semibold text-gray-900 mb-4">Thông tin Database hiện tại</h3>
-    <div class="grid grid-cols-2 gap-4 text-sm">
-        <div>
-            <span class="text-gray-600">Driver:</span>
-            <span class="font-medium">{{ config('database.default') }}</span>
+<div class="max-w-4xl mx-auto">
+    <div class="text-center mb-12">
+        <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-soft">
+            <i class="fas fa-database text-2xl text-blue-600"></i>
         </div>
-        <div>
-            <span class="text-gray-600">Host:</span>
-            <span class="font-medium">{{ config('database.connections.' . config('database.default') . '.host') }}</span>
-        </div>
-        <div>
-            <span class="text-gray-600">Port:</span>
-            <span class="font-medium">{{ config('database.connections.' . config('database.default') . '.port') }}</span>
-        </div>
-        <div>
-            <span class="text-gray-600">Database:</span>
-            <span class="font-medium">{{ config('database.connections.' . config('database.default') . '.database') }}</span>
-        </div>
-    </div>
-</div>
-
-<!-- Test Connection -->
-<div class="mb-6">
-    <button id="test-connection-btn" 
-            onclick="testConnection()"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
-        <i class="fas fa-plug mr-2"></i>
-        Kiểm tra kết nối Database
-    </button>
-</div>
-
-<!-- Connection Status -->
-<div id="connection-status" class="hidden mb-6">
-    <!-- Will be populated by JavaScript -->
-</div>
-
-<!-- Migration Section -->
-<div id="migration-section" class="hidden">
-    <div class="border-t pt-6">
-        <h3 class="font-semibold text-gray-900 mb-4">Tạo bảng Database</h3>
-        <p class="text-gray-600 mb-4">
-            Hệ thống sẽ tạo tất cả các bảng cần thiết cho ứng dụng. 
-            Quá trình này có thể mất vài phút.
+        <h2 class="text-3xl font-light text-slate-800 mb-4">Cấu hình Database</h2>
+        <p class="text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">
+            Chúng tôi sẽ kiểm tra kết nối database và tạo các bảng cần thiết cho hệ thống.
         </p>
-        
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-            <div class="flex items-start">
-                <i class="fas fa-exclamation-triangle text-yellow-600 mt-1 mr-3"></i>
-                <div>
-                    <h4 class="font-semibold text-yellow-800">Lưu ý quan trọng</h4>
-                    <p class="text-yellow-700 text-sm mt-1">
-                        Nếu database đã có dữ liệu, tất cả sẽ bị xóa và thay thế. 
-                        Hãy đảm bảo bạn đã sao lưu dữ liệu quan trọng.
-                    </p>
+    </div>
+
+    <!-- Database Info -->
+    <div class="glass-card rounded-2xl p-8 mb-8 shadow-soft border border-slate-100">
+        <div class="flex items-center mb-6">
+            <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-info-circle text-slate-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-slate-800">Thông tin Database hiện tại</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center py-3 border-b border-slate-100">
+                    <span class="text-slate-600 font-medium">Driver:</span>
+                    <span class="font-semibold text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">{{ config('database.default') }}</span>
+                </div>
+                <div class="flex justify-between items-center py-3 border-b border-slate-100">
+                    <span class="text-slate-600 font-medium">Host:</span>
+                    <span class="font-semibold text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">{{ config('database.connections.' . config('database.default') . '.host') }}</span>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center py-3 border-b border-slate-100">
+                    <span class="text-slate-600 font-medium">Port:</span>
+                    <span class="font-semibold text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">{{ config('database.connections.' . config('database.default') . '.port') }}</span>
+                </div>
+                <div class="flex justify-between items-center py-3 border-b border-slate-100">
+                    <span class="text-slate-600 font-medium">Database:</span>
+                    <span class="font-semibold text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">{{ config('database.connections.' . config('database.default') . '.database') }}</span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <button id="run-migration-btn" 
-                onclick="runMigration()"
-                class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
-            <i class="fas fa-play mr-2"></i>
-            Tạo bảng Database
+    <!-- Test Connection -->
+    <div class="mb-8">
+        <button id="test-connection-btn"
+                onclick="testConnection()"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-200 shadow-soft hover:shadow-hover transform hover:-translate-y-0.5">
+            <i class="fas fa-plug mr-3"></i>
+            Kiểm tra kết nối Database
         </button>
     </div>
-</div>
 
-<!-- Navigation -->
-<div id="navigation-section" class="hidden border-t pt-6 mt-6">
-    <div class="flex justify-between">
-        <a href="{{ route('setup.index') }}" 
-           class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-            <i class="fas fa-arrow-left mr-2"></i>
-            Quay lại
-        </a>
-        
-        <button id="next-step-btn" 
-                onclick="goToNextStep('admin')"
-                class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
-            Tiếp theo
-            <i class="fas fa-arrow-right ml-2"></i>
-        </button>
+    <!-- Connection Status -->
+    <div id="connection-status" class="hidden mb-8">
+        <!-- Will be populated by JavaScript -->
+    </div>
+
+    <!-- Migration Section -->
+    <div id="migration-section" class="hidden">
+        <div class="glass-card rounded-2xl p-8 shadow-soft border border-slate-100">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center mr-4">
+                    <i class="fas fa-database text-emerald-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-slate-800">Tạo bảng Database</h3>
+            </div>
+            <p class="text-slate-600 mb-6 leading-relaxed">
+                Hệ thống sẽ tạo tất cả các bảng cần thiết cho ứng dụng.
+                Quá trình này có thể mất vài phút.
+            </p>
+
+            <div class="glass-card bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-6">
+                <div class="flex items-start">
+                    <div class="w-8 h-8 bg-amber-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-amber-600"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-amber-800 mb-2">Lưu ý quan trọng</h4>
+                        <p class="text-amber-700 text-sm leading-relaxed">
+                            Nếu database đã có dữ liệu, tất cả sẽ bị xóa và thay thế.
+                            Hãy đảm bảo bạn đã sao lưu dữ liệu quan trọng.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <button id="run-migration-btn"
+                    onclick="runMigration()"
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-200 shadow-soft hover:shadow-hover transform hover:-translate-y-0.5">
+                <i class="fas fa-play mr-3"></i>
+                Tạo bảng Database
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div id="navigation-section" class="hidden border-t border-slate-200 pt-8 mt-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <a href="{{ route('setup.index') }}"
+               class="px-6 py-3 bg-slate-100 text-slate-700 font-medium rounded-2xl hover:bg-slate-200 transition-all duration-200 border border-slate-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Quay lại
+            </a>
+
+            <button id="next-step-btn"
+                    onclick="goToNextStep('admin')"
+                    class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-2xl transition-all duration-200 shadow-soft hover:shadow-hover">
+                Tiếp theo
+                <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
     </div>
 </div>
 @endsection
@@ -137,24 +155,26 @@ function runMigration() {
 
 function showConnectionStatus(success, message) {
     const statusDiv = document.getElementById('connection-status');
-    statusDiv.className = `p-4 rounded-lg border ${
-        success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+    statusDiv.className = `glass-card rounded-2xl p-6 shadow-soft border ${
+        success ? 'border-emerald-200 bg-emerald-50' : 'border-red-200 bg-red-50'
     }`;
-    
+
     statusDiv.innerHTML = `
-        <div class="flex items-center">
-            <i class="fas fa-${success ? 'check-circle text-green-600' : 'times-circle text-red-600'} mr-3"></i>
-            <div>
-                <h4 class="font-semibold ${success ? 'text-green-800' : 'text-red-800'}">
+        <div class="flex items-start">
+            <div class="w-10 h-10 ${success ? 'bg-emerald-100' : 'bg-red-100'} rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                <i class="fas fa-${success ? 'check-circle text-emerald-600' : 'times-circle text-red-600'}"></i>
+            </div>
+            <div class="flex-1">
+                <h4 class="font-semibold text-lg ${success ? 'text-emerald-800' : 'text-red-800'} mb-2">
                     ${success ? 'Kết nối thành công!' : 'Kết nối thất bại!'}
                 </h4>
-                <p class="${success ? 'text-green-700' : 'text-red-700'} text-sm mt-1">
+                <p class="${success ? 'text-emerald-700' : 'text-red-700'} leading-relaxed">
                     ${message}
                 </p>
             </div>
         </div>
     `;
-    
+
     statusDiv.classList.remove('hidden');
 }
 

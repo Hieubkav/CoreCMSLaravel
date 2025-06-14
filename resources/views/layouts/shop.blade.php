@@ -98,12 +98,12 @@
         .fa-image:before { content: "\f03e"; }
     </style>
 
-    <!-- Defer non-critical CSS -->
+    <!-- Modern Fonts -->
     @if(function_exists('deferNonCriticalCss'))
-        {!! deferNonCriticalCss('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700&display=swap') !!}
+        {!! deferNonCriticalCss('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap') !!}
         {!! deferNonCriticalCss('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css') !!}
     @else
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
     @endif
 
@@ -123,16 +123,16 @@
 
     <style>
         :root {
-            /* Tối ưu color palette với tone đỏ-trắng minimalist */
-            --primary: #dc2626;
-            --primary-light: #ef4444;
-            --primary-dark: #b91c1c;
-            --primary-darker: #991b1b;
-            --secondary: #1f2937;
+            /* Modern color palette với tone xanh dương-trắng-xám minimalist */
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-darker: #1e40af;
+            --secondary: #1e293b;
             --light: #fafafa;
             --gray-25: #fafafa;
-            --gray-light: #f3f4f6;
-            --red-25: #fef7f7;
+            --gray-light: #f1f5f9;
+            --blue-25: #f8fafc;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
@@ -152,13 +152,31 @@
             scroll-behavior: smooth;
         }
 
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
         body {
-            font-family: 'Open Sans', system-ui, sans-serif;
-            color: #374151;
+            color: #475569;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         }
 
         h1, h2, h3, h4, h5, h6, .heading {
-            font-family: 'Montserrat', system-ui, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: #1e293b;
+        }
+
+        .glass-card {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .shadow-soft {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .shadow-hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
 
         .section-transition {
@@ -223,11 +241,12 @@
         /* Enhanced Product Card Animations */
         .product-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            @apply glass-card rounded-2xl shadow-soft border border-slate-100;
         }
 
         .product-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            @apply shadow-hover border-slate-200;
         }
 
         .product-image {

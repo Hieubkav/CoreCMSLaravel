@@ -29,6 +29,12 @@
         <!-- Form -->
         <form id="blogForm" class="space-y-6">
             @csrf
+            <!-- Hidden inputs to ensure values are always sent -->
+            <input type="hidden" name="enable_blog" value="0">
+            <input type="hidden" name="create_sample_data" value="0">
+            <input type="hidden" name="enable_categories" value="0">
+            <input type="hidden" name="enable_featured_posts" value="0">
+            <input type="hidden" name="skip_blog" value="0">
             
             <!-- Enable Blog Option -->
             <div class="bg-gray-50 rounded-lg p-6">
@@ -178,12 +184,20 @@
 
             <!-- Action Buttons -->
             <div class="flex justify-between pt-6">
-                <a href="{{ route('setup.step', 'admin-config') }}" 
-                   class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                    <i class="fas fa-arrow-left mr-2"></i>Quay lại
-                </a>
-                
-                <button type="submit" 
+                <div class="flex space-x-3">
+                    <a href="{{ route('setup.step', 'admin-config') }}"
+                       class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Quay lại
+                    </a>
+
+                    <button type="button"
+                            id="resetBtn"
+                            class="px-6 py-2 border border-orange-300 text-orange-600 rounded-lg hover:bg-orange-50 transition-colors">
+                        <i class="fas fa-undo mr-2"></i>Reset Blog
+                    </button>
+                </div>
+
+                <button type="submit"
                         id="submitBtn"
                         class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
                     <span id="submitText">Tiếp tục</span>
@@ -218,6 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
     const submitText = document.getElementById('submitText');
     const loadingModal = document.getElementById('loadingModal');
+    const resetBtn = document.getElementById('resetBtn');
 
     // Toggle blog configuration
     enableBlogCheckbox.addEventListener('change', function() {
@@ -269,6 +284,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 if (data.redirect) {
                     window.location.href = data.redirect;
+                } else if (data.next_step) {
+                    window.location.href = '{{ route("setup.step", "") }}/' + data.next_step;
                 } else {
                     window.location.href = '{{ route("setup.complete") }}';
                 }
@@ -286,6 +303,38 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingModal.classList.remove('flex');
             submitBtn.disabled = false;
         });
+    });
+
+    // Handle reset button
+    resetBtn.addEventListener('click', function() {
+        if (confirm('Bạn có chắc chắn muốn reset blog step? Tất cả dữ liệu và files liên quan đến blog sẽ bị xóa.')) {
+            resetBtn.disabled = true;
+            resetBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang reset...';
+
+            fetch('{{ route("setup.reset.step", "blog") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Reset blog step thành công!');
+                    window.location.reload();
+                } else {
+                    alert('Lỗi: ' + (data.message || 'Có lỗi xảy ra khi reset'));
+                    resetBtn.disabled = false;
+                    resetBtn.innerHTML = '<i class="fas fa-undo mr-2"></i>Reset Blog';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi reset');
+                resetBtn.disabled = false;
+                resetBtn.innerHTML = '<i class="fas fa-undo mr-2"></i>Reset Blog';
+            });
+        }
     });
 });
 </script>

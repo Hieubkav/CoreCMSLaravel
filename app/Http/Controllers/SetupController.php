@@ -9,7 +9,12 @@ use App\Actions\Setup\Controller\ProcessWebsiteStep;
 use App\Actions\Setup\Controller\ProcessFrontendConfigStep;
 use App\Actions\Setup\Controller\ProcessAdminConfigStep;
 use App\Actions\Setup\Controller\ProcessBlogStep;
+use App\Actions\Setup\Controller\ProcessStaffStep;
+use App\Actions\Setup\Controller\ProcessServiceStep;
 use App\Actions\Setup\Controller\ResetSystem;
+use App\Actions\Setup\Controller\ResetBlogStep;
+use App\Actions\Setup\Controller\ResetStaffStep;
+use App\Actions\Setup\Controller\ResetServiceStep;
 use App\Actions\Setup\Controller\SetupUtilities;
 use App\Actions\Setup\Controller\CompleteSetup;
 use Exception;
@@ -82,6 +87,10 @@ class SetupController extends Controller
                     return $this->handleActionResponse(ProcessAdminConfigStep::handle($request));
                 case 'blog':
                     return $this->handleActionResponse(ProcessBlogStep::handle($request));
+                case 'staff':
+                    return $this->handleActionResponse(ProcessStaffStep::handle($request));
+                case 'service':
+                    return $this->handleActionResponse(ProcessServiceStep::handle($request));
 
                 default:
                     return response()->json(['error' => 'Bước không hợp lệ'], 400);
@@ -120,5 +129,28 @@ class SetupController extends Controller
     public function reset(Request $request)
     {
         return $this->handleActionResponse(ResetSystem::handle($request));
+    }
+
+    /**
+     * Reset từng step cụ thể
+     */
+    public function resetStep(Request $request, $step)
+    {
+        try {
+            switch ($step) {
+                case 'blog':
+                    return $this->handleActionResponse(ResetBlogStep::handle($request));
+                case 'staff':
+                    return $this->handleActionResponse(ResetStaffStep::handle($request));
+                case 'service':
+                    return $this->handleActionResponse(ResetServiceStep::handle($request));
+                default:
+                    return response()->json(['error' => 'Step reset không hỗ trợ'], 400);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Có lỗi xảy ra khi reset step: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

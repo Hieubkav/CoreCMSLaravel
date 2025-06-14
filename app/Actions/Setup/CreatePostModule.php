@@ -52,6 +52,19 @@ class CreatePostModule
             // 12. Tạo và chạy seeders nếu được yêu cầu
             if (isset($config['create_sample_data']) && $config['create_sample_data']) {
                 self::createSeeders($results);
+
+                // Dump autoload để refresh class map
+                try {
+                    exec('composer dump-autoload 2>&1', $output, $returnCode);
+                    if ($returnCode === 0) {
+                        $results['autoload'][] = 'Composer autoload refreshed';
+                    } else {
+                        $results['autoload_errors'][] = 'Failed to refresh autoload: ' . implode(' ', $output);
+                    }
+                } catch (\Exception $e) {
+                    $results['autoload_errors'][] = 'Failed to refresh autoload: ' . $e->getMessage();
+                }
+
                 self::runSeeders($results);
             }
 
@@ -359,6 +372,12 @@ Route::get('/blog/category/{slug}', [App\Http\Controllers\BlogController::class,
     private static function runSeeders(array &$results): void
     {
         try {
+            // Kiểm tra xem model Post có tồn tại không
+            if (!class_exists('App\Models\Post')) {
+                $results['seeders_errors'][] = 'Post model not found, skipping seeder';
+                return;
+            }
+
             Artisan::call('db:seed', [
                 '--class' => 'BlogSeeder',
                 '--force' => true

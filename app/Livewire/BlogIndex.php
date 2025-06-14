@@ -24,7 +24,6 @@ class BlogIndex extends Component
         'category' => ['except' => ''],
         'type' => ['except' => ''],
         'sort' => ['except' => 'latest'],
-        'page' => ['except' => 1],
     ];
 
     public function mount()

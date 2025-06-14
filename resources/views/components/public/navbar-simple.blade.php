@@ -29,6 +29,42 @@
                 <a href="{{ route('storeFront') }}" class="text-gray-700 hover:text-red-600 transition-colors">
                     Trang chủ
                 </a>
+
+                @if(class_exists('App\Models\Service') && Route::has('services.index'))
+                <!-- Services Dropdown -->
+                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                    <button @click="open = !open" class="text-gray-700 hover:text-red-600 transition-colors flex items-center">
+                        Dịch vụ
+                        <i class="fas fa-chevron-down ml-1 text-xs" :class="{ 'rotate-180': open }"></i>
+                    </button>
+                    <div x-show="open" x-transition class="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-50">
+                        <a href="{{ route('services.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-t-lg">
+                            <i class="fas fa-list mr-2"></i>Tất cả dịch vụ
+                        </a>
+                        @if(isset($serviceCategories) && $serviceCategories->count() > 0)
+                            <div class="border-t border-gray-100"></div>
+                            @foreach($serviceCategories as $categoryKey => $categoryName)
+                                <a href="{{ route('services.category', $categoryKey) }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-50">
+                                    <i class="fas fa-tag mr-2 text-xs"></i>{{ $categoryName }}
+                                </a>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+                @endif
+
+                @if(class_exists('App\Models\Staff') && Route::has('staff.index'))
+                <a href="{{ route('staff.index') }}" class="text-gray-700 hover:text-red-600 transition-colors">
+                    Đội ngũ
+                </a>
+                @endif
+
+                @if(class_exists('App\Models\Post') && Route::has('posts.index'))
+                <a href="{{ route('posts.index') }}" class="text-gray-700 hover:text-red-600 transition-colors">
+                    Blog
+                </a>
+                @endif
+
                 <a href="{{ route('filament.admin.pages.dashboard') }}" class="text-gray-700 hover:text-red-600 transition-colors">
                     Admin Panel
                 </a>
@@ -68,6 +104,25 @@
                     <a href="{{ route('storeFront') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
                         <i class="fas fa-home mr-2"></i> Trang chủ
                     </a>
+
+                    @if(class_exists('App\Models\Service') && Route::has('services.index'))
+                    <a href="{{ route('services.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                        <i class="fas fa-briefcase mr-2"></i> Dịch vụ
+                    </a>
+                    @endif
+
+                    @if(class_exists('App\Models\Staff') && Route::has('staff.index'))
+                    <a href="{{ route('staff.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                        <i class="fas fa-users mr-2"></i> Đội ngũ
+                    </a>
+                    @endif
+
+                    @if(class_exists('App\Models\Post') && Route::has('posts.index'))
+                    <a href="{{ route('posts.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                        <i class="fas fa-newspaper mr-2"></i> Blog
+                    </a>
+                    @endif
+
                     <a href="{{ route('filament.admin.pages.dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
                         <i class="fas fa-user-shield mr-2"></i> Admin Panel
                     </a>

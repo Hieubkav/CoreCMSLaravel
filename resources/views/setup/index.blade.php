@@ -6,18 +6,30 @@
     <title>Cài đặt Core Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .glass-card { backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.8); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .shadow-soft { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); }
+        .shadow-hover { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+    <div class="container mx-auto px-6 py-12 max-w-6xl">
         <!-- Environment Notice -->
         @if(app()->environment('local'))
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
-            <div class="flex items-center">
-                <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+        <div class="glass-card border border-blue-100 rounded-2xl p-6 mb-8 shadow-soft">
+            <div class="flex items-start">
+                <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                    <i class="fas fa-code text-blue-600"></i>
+                </div>
                 <div>
-                    <h3 class="text-blue-800 font-semibold">Development Mode</h3>
-                    <p class="text-blue-700 text-sm">
-                        Bạn đang ở môi trường <strong>local</strong>. Setup wizard luôn có thể truy cập để test và phát triển.
+                    <h3 class="text-slate-800 font-semibold text-lg mb-2">Development Mode</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Bạn đang ở môi trường <span class="font-medium text-blue-600">local</span>. Setup wizard luôn có thể truy cập để test và phát triển.
                         Trong production, setup wizard sẽ tự động bị khóa sau khi hoàn thành.
                     </p>
                 </div>
@@ -27,32 +39,32 @@
 
         <!-- Success Message -->
         @if(request('completed') && request('message'))
-        <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-            <div class="flex items-center">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+        <div class="glass-card border border-emerald-100 rounded-2xl p-8 mb-8 shadow-soft">
+            <div class="flex items-start">
+                <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mr-6 flex-shrink-0">
+                    <i class="fas fa-check-circle text-emerald-600 text-xl"></i>
                 </div>
-                <div class="ml-4">
-                    <h3 class="text-lg font-semibold text-green-800 mb-2">
+                <div class="flex-1">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-3">
                         Setup Hoàn Thành!
                     </h3>
-                    <p class="text-green-700">
+                    <p class="text-slate-600 mb-6 leading-relaxed">
                         {{ request('message') }}
                     </p>
-                    <div class="mt-4 flex flex-wrap gap-3">
+                    <div class="flex flex-wrap gap-3">
                         <a href="{{ route('filament.admin.pages.dashboard') }}"
-                           class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+                           class="inline-flex items-center px-6 py-3 bg-slate-800 text-white font-medium rounded-xl hover:bg-slate-900 transition-all duration-200 shadow-soft hover:shadow-hover">
                             <i class="fas fa-user-shield mr-2"></i>
                             Vào Admin Panel
                         </a>
                         <a href="{{ route('storeFront') }}"
-                           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                           class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-soft hover:shadow-hover">
                             <i class="fas fa-home mr-2"></i>
                             Xem Website
                         </a>
                         @if(isset($isSetupCompleted) && $isSetupCompleted)
                         <a href="/blog"
-                           class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+                           class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-all duration-200 shadow-soft hover:shadow-hover">
                             <i class="fas fa-blog mr-2"></i>
                             Xem Blog
                         </a>
@@ -64,14 +76,14 @@
         @endif
 
         <!-- Header -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-red-100 rounded-full mb-6">
-                <i class="fas fa-cogs text-3xl text-red-600"></i>
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl mb-8 shadow-soft">
+                <i class="fas fa-cogs text-3xl text-blue-600"></i>
             </div>
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">
-                Chào mừng đến với Core Framework
+            <h1 class="text-5xl font-light text-slate-800 mb-6 tracking-tight">
+                Chào mừng đến với <span class="font-semibold text-blue-600">Core Framework</span>
             </h1>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto mb-8 leading-relaxed">
                 Hệ thống quản lý nội dung đa năng được xây dựng trên Laravel.
                 Hãy bắt đầu thiết lập dự án của bạn trong vài phút.
             </p>
@@ -79,28 +91,30 @@
 
         @if(isset($isSetupCompleted) && $isSetupCompleted)
         <!-- Setup Completed - Action Buttons -->
-        <div class="bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg p-8 text-white text-center mb-8">
-            <div class="flex items-center justify-center mb-4">
-                <i class="fas fa-check-circle text-4xl mr-3"></i>
-                <h2 class="text-3xl font-bold">Hệ thống đã được cài đặt!</h2>
+        <div class="glass-card rounded-3xl p-10 text-center mb-12 shadow-soft border border-emerald-100">
+            <div class="flex items-center justify-center mb-6">
+                <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mr-4">
+                    <i class="fas fa-check-circle text-emerald-600 text-2xl"></i>
+                </div>
+                <h2 class="text-3xl font-semibold text-slate-800">Hệ thống đã được cài đặt!</h2>
             </div>
-            <p class="text-xl mb-6 opacity-90">
+            <p class="text-xl text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
                 Core Framework đã sẵn sàng hoạt động. Bạn có thể truy cập admin panel hoặc reset để cài lại.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a href="{{ route('filament.admin.pages.dashboard') }}"
-                   class="inline-flex items-center px-8 py-4 bg-white text-green-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors">
-                    <i class="fas fa-user-shield mr-2"></i>
+                   class="inline-flex items-center px-8 py-4 bg-slate-800 text-white font-semibold rounded-2xl hover:bg-slate-900 transition-all duration-200 shadow-soft hover:shadow-hover">
+                    <i class="fas fa-user-shield mr-3"></i>
                     Vào Admin Panel
                 </a>
                 <a href="{{ route('storeFront') }}"
-                   class="inline-flex items-center px-8 py-4 bg-white/20 text-white font-semibold rounded-lg hover:bg-white/30 transition-colors">
-                    <i class="fas fa-home mr-2"></i>
+                   class="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-2xl hover:bg-blue-700 transition-all duration-200 shadow-soft hover:shadow-hover">
+                    <i class="fas fa-home mr-3"></i>
                     Xem Website
                 </a>
                 @if(app()->environment('local'))
                 <button onclick="showResetConfirmation()"
-                        class="inline-flex items-center px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors">
+                        class="inline-flex items-center px-6 py-3 bg-slate-100 text-slate-700 font-medium rounded-2xl hover:bg-slate-200 transition-all duration-200 border border-slate-200">
                     <i class="fas fa-undo mr-2"></i>
                     Reset & Cài lại
                 </button>
@@ -109,19 +123,22 @@
         </div>
         @else
         <!-- Ready to Start - Action Buttons -->
-        <div class="bg-gradient-to-r from-red-600 to-orange-600 rounded-lg p-8 text-white text-center mb-8">
-            <h2 class="text-3xl font-bold mb-4">Sẵn sàng bắt đầu?</h2>
-            <p class="text-xl mb-6 opacity-90">
+        <div class="glass-card rounded-3xl p-10 text-center mb-12 shadow-soft border border-blue-100">
+            <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-rocket text-blue-600 text-2xl"></i>
+            </div>
+            <h2 class="text-3xl font-semibold text-slate-800 mb-4">Sẵn sàng bắt đầu?</h2>
+            <p class="text-xl text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
                 Chỉ cần vài bước đơn giản để có một website hoàn chỉnh
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a href="{{ route('setup.step', 'database') }}"
-                   class="inline-flex items-center px-8 py-4 bg-white text-red-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors">
-                    <i class="fas fa-rocket mr-2"></i>
+                   class="inline-flex items-center px-10 py-4 bg-blue-600 text-white font-semibold rounded-2xl hover:bg-blue-700 transition-all duration-200 shadow-soft hover:shadow-hover transform hover:-translate-y-0.5">
+                    <i class="fas fa-rocket mr-3"></i>
                     Bắt đầu cài đặt ngay
                 </a>
-                <div class="text-white/80 text-sm">
-                    <i class="fas fa-info-circle mr-1"></i>
+                <div class="flex items-center text-slate-500 text-sm">
+                    <i class="fas fa-info-circle mr-2"></i>
                     Không cần kinh nghiệm kỹ thuật
                 </div>
             </div>
@@ -130,36 +147,36 @@
 
         <!-- Development Tools (Always visible in local) -->
         @if(app()->environment('local'))
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+        <div class="glass-card border border-amber-100 rounded-2xl p-8 mb-8 shadow-soft">
             <div class="flex items-start">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-tools text-yellow-600 text-xl"></i>
+                <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center mr-6 flex-shrink-0">
+                    <i class="fas fa-tools text-amber-600 text-lg"></i>
                 </div>
-                <div class="ml-4 flex-1">
-                    <h3 class="text-lg font-semibold text-yellow-800 mb-2">
+                <div class="flex-1">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-3">
                         Development Tools
                     </h3>
-                    <p class="text-yellow-700 text-sm mb-4">
+                    <p class="text-slate-600 text-sm mb-6 leading-relaxed">
                         Các công cụ hỗ trợ development và testing. Chỉ hiển thị trong môi trường local.
                     </p>
                     <div class="flex flex-wrap gap-3">
                         <button onclick="showResetConfirmation()"
-                                class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+                                class="inline-flex items-center px-5 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition-all duration-200 border border-slate-200">
                             <i class="fas fa-undo mr-2"></i>
                             Reset Hệ thống
                         </button>
                         <a href="{{ route('filament.admin.pages.dashboard') }}"
-                           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                           class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-soft">
                             <i class="fas fa-user-shield mr-2"></i>
                             Admin Panel
                         </a>
                         <a href="{{ route('storeFront') }}"
-                           class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+                           class="inline-flex items-center px-5 py-2.5 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 transition-all duration-200 shadow-soft">
                             <i class="fas fa-home mr-2"></i>
                             Xem Website
                         </a>
                         <button onclick="clearCache()"
-                                class="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors">
+                                class="inline-flex items-center px-5 py-2.5 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-all duration-200 shadow-soft">
                             <i class="fas fa-broom mr-2"></i>
                             Clear Cache
                         </button>
@@ -170,50 +187,58 @@
         @endif
 
         <!-- Footer -->
-        <div class="text-center mt-12 pt-8 border-t border-gray-200">
-            <p class="text-gray-500">
+        <div class="text-center mt-16 pt-8 border-t border-slate-200">
+            <p class="text-slate-500 font-light">
                 Core Framework v1.0 - Được xây dựng với ❤️ bằng Laravel
             </p>
         </div>
     </div>
 
     <!-- Reset Confirmation Modal -->
-    <div id="resetModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg p-8 max-w-md w-full">
+    <div id="resetModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-6">
+            <div class="glass-card rounded-3xl p-8 max-w-md w-full shadow-hover border border-slate-200">
                 <div class="text-center">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
+                    <div class="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-500"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Xác nhận Reset</h3>
-                    <p class="text-gray-600 mb-6">
+                    <h3 class="text-2xl font-semibold text-slate-800 mb-4">Xác nhận Reset</h3>
+                    <p class="text-slate-600 mb-6 leading-relaxed">
                         Bạn có chắc chắn muốn reset toàn bộ hệ thống? Hành động này sẽ:
                     </p>
-                    <ul class="text-left text-sm text-gray-600 mb-6 space-y-2">
+                    <ul class="text-left text-sm text-slate-600 mb-8 space-y-3">
                         <li class="flex items-center">
-                            <i class="fas fa-times text-red-500 mr-2"></i>
+                            <div class="w-5 h-5 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-times text-red-500 text-xs"></i>
+                            </div>
                             Xóa tất cả dữ liệu trong database
                         </li>
                         <li class="flex items-center">
-                            <i class="fas fa-times text-red-500 mr-2"></i>
+                            <div class="w-5 h-5 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-times text-red-500 text-xs"></i>
+                            </div>
                             Xóa tất cả files trong storage
                         </li>
                         <li class="flex items-center">
-                            <i class="fas fa-times text-red-500 mr-2"></i>
+                            <div class="w-5 h-5 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-times text-red-500 text-xs"></i>
+                            </div>
                             Clear tất cả cache
                         </li>
                         <li class="flex items-center">
-                            <i class="fas fa-exclamation text-orange-500 mr-2"></i>
+                            <div class="w-5 h-5 bg-amber-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-exclamation text-amber-500 text-xs"></i>
+                            </div>
                             Không thể hoàn tác
                         </li>
                     </ul>
                     <div class="flex gap-4">
                         <button onclick="hideResetConfirmation()"
-                                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                class="flex-1 px-6 py-3 bg-slate-100 text-slate-700 font-medium rounded-2xl hover:bg-slate-200 transition-all duration-200">
                             Hủy
                         </button>
                         <button onclick="performReset()"
-                                class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                class="flex-1 px-6 py-3 bg-red-600 text-white font-medium rounded-2xl hover:bg-red-700 transition-all duration-200 shadow-soft">
                             <i class="fas fa-undo mr-2"></i>
                             Reset ngay
                         </button>
@@ -224,14 +249,14 @@
     </div>
 
     <!-- Loading Modal -->
-    <div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="bg-white rounded-lg p-8 max-w-md w-full text-center">
-                <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600 mx-auto mb-4"></div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Đang reset hệ thống...</h3>
-                <p class="text-gray-600">Vui lòng đợi, quá trình này có thể mất vài phút.</p>
-                <div class="mt-4">
-                    <div id="resetProgress" class="text-sm text-gray-500"></div>
+    <div id="loadingModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-6">
+            <div class="glass-card rounded-3xl p-8 max-w-md w-full text-center shadow-hover border border-slate-200">
+                <div class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-6"></div>
+                <h3 class="text-xl font-semibold text-slate-800 mb-3">Đang reset hệ thống...</h3>
+                <p class="text-slate-600 leading-relaxed">Vui lòng đợi, quá trình này có thể mất vài phút.</p>
+                <div class="mt-6">
+                    <div id="resetProgress" class="text-sm text-slate-500 font-medium"></div>
                 </div>
             </div>
         </div>

@@ -4,132 +4,150 @@
 @section('description', 'Tạo tài khoản quản trị viên đầu tiên cho hệ thống')
 
 @section('content')
-<div class="text-center mb-8">
-    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="fas fa-user-shield text-2xl text-purple-600"></i>
+<div class="max-w-2xl mx-auto">
+    <div class="text-center mb-12">
+        <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-soft">
+            <i class="fas fa-user-shield text-2xl text-indigo-600"></i>
+        </div>
+        <h2 class="text-3xl font-light text-slate-800 mb-4">Tạo tài khoản Admin</h2>
+        <p class="text-lg text-slate-600 leading-relaxed">
+            Tạo tài khoản quản trị viên đầu tiên để truy cập vào bảng điều khiển admin.
+        </p>
     </div>
-    <h2 class="text-2xl font-bold text-gray-900 mb-2">Tạo tài khoản Admin</h2>
-    <p class="text-gray-600">
-        Tạo tài khoản quản trị viên đầu tiên để truy cập vào bảng điều khiển admin.
-    </p>
-</div>
 
-<!-- Admin Form -->
-<form id="admin-form" onsubmit="createAdmin(event)">
-    <div class="space-y-6">
-        <!-- Name Field -->
-        <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                Họ và tên <span class="text-red-500">*</span>
-            </label>
-            <input type="text" 
-                   id="name" 
-                   name="name" 
-                   required
-                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
-                   placeholder="Nhập họ và tên của bạn">
-            <div id="name-error" class="text-red-600 text-sm mt-1 hidden"></div>
-        </div>
-
-        <!-- Email Field -->
-        <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                Email <span class="text-red-500">*</span>
-            </label>
-            <input type="email" 
-                   id="email" 
-                   name="email" 
-                   required
-                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
-                   placeholder="admin@example.com">
-            <div id="email-error" class="text-red-600 text-sm mt-1 hidden"></div>
-        </div>
-
-        <!-- Password Field -->
-        <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                Mật khẩu <span class="text-red-500">*</span>
-            </label>
-            <div class="relative">
-                <input type="password" 
-                       id="password" 
-                       name="password" 
-                       required
-                       minlength="8"
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors pr-12"
-                       placeholder="Tối thiểu 8 ký tự">
-                <button type="button" 
-                        onclick="togglePassword('password')"
-                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
-                    <i id="password-icon" class="fas fa-eye"></i>
-                </button>
-            </div>
-            <div id="password-error" class="text-red-600 text-sm mt-1 hidden"></div>
-            <div class="text-gray-500 text-sm mt-1">
-                Mật khẩu phải có ít nhất 8 ký tự
-            </div>
-        </div>
-
-        <!-- Confirm Password Field -->
-        <div>
-            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
-                Xác nhận mật khẩu <span class="text-red-500">*</span>
-            </label>
-            <div class="relative">
-                <input type="password" 
-                       id="password_confirmation" 
-                       name="password_confirmation" 
-                       required
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors pr-12"
-                       placeholder="Nhập lại mật khẩu">
-                <button type="button" 
-                        onclick="togglePassword('password_confirmation')"
-                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
-                    <i id="password_confirmation-icon" class="fas fa-eye"></i>
-                </button>
-            </div>
-            <div id="password_confirmation-error" class="text-red-600 text-sm mt-1 hidden"></div>
-        </div>
-
-        <!-- Security Note -->
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div class="flex items-start">
-                <i class="fas fa-info-circle text-blue-600 mt-1 mr-3"></i>
+    <!-- Admin Form -->
+    <div class="glass-card rounded-2xl p-8 shadow-soft border border-slate-100">
+        <form id="admin-form" onsubmit="createAdmin(event)">
+            <div class="space-y-6">
+                <!-- Name Field -->
                 <div>
-                    <h4 class="font-semibold text-blue-800">Lưu ý bảo mật</h4>
-                    <ul class="text-blue-700 text-sm mt-1 space-y-1">
-                        <li>• Sử dụng mật khẩu mạnh với ít nhất 8 ký tự</li>
-                        <li>• Kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt</li>
-                        <li>• Không chia sẻ thông tin đăng nhập với người khác</li>
-                        <li>• Bạn có thể thay đổi thông tin này sau khi hoàn thành cài đặt</li>
-                    </ul>
+                    <label for="name" class="block text-sm font-semibold text-slate-800 mb-3">
+                        Họ và tên <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           required
+                           class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-slate-50 focus:bg-white shadow-soft"
+                           placeholder="Nhập họ và tên của bạn">
+                    <div id="name-error" class="text-red-600 text-sm mt-2 hidden"></div>
                 </div>
+
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-semibold text-slate-800 mb-3">
+                        Email <span class="text-red-500">*</span>
+                    </label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           required
+                           class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-slate-50 focus:bg-white shadow-soft"
+                           placeholder="admin@example.com">
+                    <div id="email-error" class="text-red-600 text-sm mt-2 hidden"></div>
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-slate-800 mb-3">
+                        Mật khẩu <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               required
+                               minlength="8"
+                               class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-slate-50 focus:bg-white pr-12 shadow-soft"
+                               placeholder="Tối thiểu 8 ký tự">
+                        <button type="button"
+                                onclick="togglePassword('password')"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors">
+                            <i id="password-icon" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div id="password-error" class="text-red-600 text-sm mt-2 hidden"></div>
+                    <div class="text-slate-500 text-sm mt-2">
+                        Mật khẩu phải có ít nhất 8 ký tự
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div>
+                    <label for="password_confirmation" class="block text-sm font-semibold text-slate-800 mb-3">
+                        Xác nhận mật khẩu <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password"
+                               id="password_confirmation"
+                               name="password_confirmation"
+                               required
+                               class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-slate-50 focus:bg-white pr-12 shadow-soft"
+                               placeholder="Nhập lại mật khẩu">
+                        <button type="button"
+                                onclick="togglePassword('password_confirmation')"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors">
+                            <i id="password_confirmation-icon" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div id="password_confirmation-error" class="text-red-600 text-sm mt-2 hidden"></div>
+                </div>
+
+                <!-- Security Note -->
+                <div class="glass-card bg-blue-50 border border-blue-200 rounded-2xl p-6">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-blue-800 mb-3">Lưu ý bảo mật</h4>
+                            <ul class="text-blue-700 text-sm space-y-2">
+                                <li class="flex items-start">
+                                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                    Sử dụng mật khẩu mạnh với ít nhất 8 ký tự
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                    Kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                    Không chia sẻ thông tin đăng nhập với người khác
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                    Bạn có thể thay đổi thông tin này sau khi hoàn thành cài đặt
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit"
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-200 shadow-soft hover:shadow-hover transform hover:-translate-y-0.5">
+                    <i class="fas fa-user-plus mr-3"></i>
+                    Tạo tài khoản Admin
+                </button>
             </div>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" 
-                class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
-            <i class="fas fa-user-plus mr-2"></i>
-            Tạo tài khoản Admin
-        </button>
+        </form>
     </div>
-</form>
 
-<!-- Navigation -->
-<div id="navigation-section" class="hidden border-t pt-6 mt-6">
-    <div class="flex justify-between">
-        <a href="{{ route('setup.step', 'database') }}" 
-           class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-            <i class="fas fa-arrow-left mr-2"></i>
-            Quay lại
-        </a>
-        
-        <button onclick="goToNextStep('website')"
-                class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
-            Tiếp theo
-            <i class="fas fa-arrow-right ml-2"></i>
-        </button>
+    <!-- Navigation -->
+    <div id="navigation-section" class="hidden border-t border-slate-200 pt-8 mt-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <a href="{{ route('setup.step', 'database') }}"
+               class="px-6 py-3 bg-slate-100 text-slate-700 font-medium rounded-2xl hover:bg-slate-200 transition-all duration-200 border border-slate-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Quay lại
+            </a>
+
+            <button onclick="goToNextStep('website')"
+                    class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-2xl transition-all duration-200 shadow-soft hover:shadow-hover">
+                Tiếp theo
+                <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
     </div>
 </div>
 @endsection

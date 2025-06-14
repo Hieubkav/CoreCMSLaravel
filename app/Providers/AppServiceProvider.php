@@ -27,7 +27,20 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Register Observers for existing models only
-        // Post::observe(PostObserver::class);
+        // Register Post Observer if Post model exists
+        if (class_exists(\App\Models\Post::class) && class_exists(\App\Observers\PostObserver::class)) {
+            \App\Models\Post::observe(\App\Observers\PostObserver::class);
+        }
+
+        // Register Service Observer if Service model exists
+        if (class_exists(\App\Models\Service::class) && class_exists(\App\Observers\ServiceObserver::class)) {
+            \App\Models\Service::observe(\App\Observers\ServiceObserver::class);
+        }
+
+        // Register Staff Observer if Staff model exists
+        if (class_exists(\App\Models\Staff::class) && class_exists(\App\Observers\StaffObserver::class)) {
+            \App\Models\Staff::observe(\App\Observers\StaffObserver::class);
+        }
 
         // Register Generated Model Observers
         // \App\Generated\Models\WebDesign::observe(\App\Generated\Observers\WebDesignObserver::class);

@@ -7,8 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .glass-card { backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.8); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .shadow-soft { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); }
+        .shadow-hover { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); }
         .generation-progress {
             transition: all 0.3s ease;
         }
@@ -28,23 +36,23 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+    <div class="container mx-auto px-6 py-12 max-w-7xl">
         <!-- Header -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-                <i class="fas fa-cogs text-2xl text-red-600"></i>
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl mb-6 shadow-soft">
+                <i class="fas fa-cogs text-2xl text-blue-600"></i>
             </div>
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                Core Framework Setup
+            <h1 class="text-4xl font-light text-slate-800 mb-4 tracking-tight">
+                Core Framework <span class="font-semibold text-blue-600">Setup</span>
             </h1>
-            <p class="text-gray-600">
+            <p class="text-lg text-slate-600 leading-relaxed">
                 @yield('description', 'Thiết lập dự án của bạn')
             </p>
         </div>
 
         <!-- Progress Bar -->
-        <div class="max-w-6xl mx-auto mb-8">
+        <div class="max-w-5xl mx-auto mb-12">
             @php
                 $allSteps = [
                     'database' => ['title' => 'Database', 'group' => 'core'],
@@ -94,24 +102,34 @@
             @endphp
 
             <!-- Compact Progress Indicator -->
-            <div class="bg-white rounded-lg border p-4 mb-4">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="text-sm font-medium text-gray-700">
-                        Bước {{ $currentStepNumber }} / {{ $totalSteps }}
+            <div class="glass-card rounded-2xl p-6 mb-8 shadow-soft border border-slate-100">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                            <span class="text-blue-600 font-semibold text-sm">{{ $currentStepNumber }}</span>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-slate-700">
+                                Bước {{ $currentStepNumber }} / {{ $totalSteps }}
+                            </div>
+                            <div class="text-xs text-slate-500">
+                                {{ $allSteps[$currentStepKey]['title'] ?? 'Unknown' }}
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-sm text-gray-500">
-                        {{ $allSteps[$currentStepKey]['title'] ?? 'Unknown' }}
+                    <div class="text-sm text-slate-500 font-medium">
+                        {{ round((($currentStepNumber - 1) / ($totalSteps - 1)) * 100) }}%
                     </div>
                 </div>
 
                 <!-- Progress Bar -->
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="bg-red-600 h-2 rounded-full transition-all duration-300"
+                <div class="w-full bg-slate-200 rounded-full h-2">
+                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
                          style="width: {{ (($currentStepNumber - 1) / ($totalSteps - 1)) * 100 }}%"></div>
                 </div>
 
                 <!-- Group Indicators -->
-                <div class="flex justify-between mt-3 text-xs">
+                <div class="flex justify-between mt-4 text-xs">
                     @foreach($groupedSteps as $groupName => $groupSteps)
                         @php
                             $groupStepNumbers = [];
@@ -132,10 +150,10 @@
                             }
                         @endphp
                         <div class="flex items-center">
-                            <div class="w-3 h-3 rounded-full mr-2
-                                {{ $isGroupCompleted ? 'bg-green-500' : ($isGroupActive ? 'bg-red-500' : 'bg-gray-300') }}">
+                            <div class="w-3 h-3 rounded-full mr-2 transition-colors duration-300
+                                {{ $isGroupCompleted ? 'bg-emerald-500' : ($isGroupActive ? 'bg-blue-500' : 'bg-slate-300') }}">
                             </div>
-                            <span class="text-gray-600 capitalize">
+                            <span class="text-slate-600 font-medium capitalize">
                                 {{ $groupName === 'core' ? 'Cơ bản' :
                                    ($groupName === 'system' ? 'Hệ thống' :
                                    ($groupName === 'modules' ? 'Modules' : 'Hoàn thành')) }}
@@ -152,19 +170,19 @@
         </div>
 
         <!-- Footer -->
-        <div class="text-center mt-8">
-            <p class="text-gray-500 text-sm">
+        <div class="text-center mt-16">
+            <p class="text-slate-500 text-sm font-light">
                 Core Framework v1.0 - Powered by Laravel
             </p>
         </div>
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
-        <div class="bg-white rounded-lg p-8 max-w-sm mx-4">
+    <div id="loading-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm items-center justify-center hidden z-50">
+        <div class="glass-card rounded-3xl p-8 max-w-sm mx-4 shadow-hover border border-slate-200">
             <div class="text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-                <p class="text-gray-600" id="loading-text">Đang xử lý...</p>
+                <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-slate-600 font-medium" id="loading-text">Đang xử lý...</p>
             </div>
         </div>
     </div>
