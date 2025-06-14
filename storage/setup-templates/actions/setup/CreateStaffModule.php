@@ -152,16 +152,12 @@ class CreateStaffModule
             File::makeDirectory($observersPath, 0755, true);
         }
 
-        $observers = ['StaffObserver.php'];
-
-        foreach ($observers as $observer) {
-            $templateFile = $templatesPath . '/' . $observer;
-            $targetFile = $observersPath . '/' . $observer;
-            
-            if (File::exists($templateFile)) {
-                File::copy($templateFile, $targetFile);
-                $results['observers'][] = $targetFile;
-            }
+        $templateFile = $templatesPath . '/StaffObserver.php';
+        $targetFile = $observersPath . '/StaffObserver.php';
+        
+        if (File::exists($templateFile)) {
+            File::copy($templateFile, $targetFile);
+            $results['observers'][] = $targetFile;
         }
     }
 
@@ -172,31 +168,23 @@ class CreateStaffModule
     {
         $templatesPath = base_path('storage/setup-templates/staff/filament/resources');
         $resourcesPath = base_path('app/Filament/Admin/Resources');
-
-        // Copy resource files
-        $resources = ['StaffResource.php'];
-
-        foreach ($resources as $resource) {
-            $templateFile = $templatesPath . '/' . $resource;
-            $targetFile = $resourcesPath . '/' . $resource;
-
-            if (File::exists($templateFile)) {
-                File::copy($templateFile, $targetFile);
-                $results['filament_resources'][] = $targetFile;
-            }
+        
+        if (!File::exists($resourcesPath)) {
+            File::makeDirectory($resourcesPath, 0755, true);
         }
 
-        // Copy resource page directories if they exist
-        $resourceDirs = ['StaffResource'];
-
-        foreach ($resourceDirs as $resourceDir) {
-            $templateDir = $templatesPath . '/' . $resourceDir;
-            $targetDir = $resourcesPath . '/' . $resourceDir;
-
-            if (File::exists($templateDir)) {
-                File::copyDirectory($templateDir, $targetDir);
-                $results['filament_resource_pages'][] = $targetDir;
+        $resources = File::allFiles($templatesPath);
+        foreach ($resources as $resource) {
+            $relativePath = $resource->getRelativePathname();
+            $targetFile = $resourcesPath . '/' . $relativePath;
+            $targetDir = dirname($targetFile);
+            
+            if (!File::exists($targetDir)) {
+                File::makeDirectory($targetDir, 0755, true);
             }
+            
+            File::copy($resource->getPathname(), $targetFile);
+            $results['filament_resources'][] = $targetFile;
         }
     }
 
@@ -212,18 +200,12 @@ class CreateStaffModule
             File::makeDirectory($componentsPath, 0755, true);
         }
 
-        $components = [
-            'staff-section.blade.php'
-        ];
-
-        foreach ($components as $component) {
-            $templateFile = $templatesPath . '/' . $component;
-            $targetFile = $componentsPath . '/' . $component;
-            
-            if (File::exists($templateFile)) {
-                File::copy($templateFile, $targetFile);
-                $results['components'][] = $targetFile;
-            }
+        $templateFile = $templatesPath . '/staff-section.blade.php';
+        $targetFile = $componentsPath . '/staff-section.blade.php';
+        
+        if (File::exists($templateFile)) {
+            File::copy($templateFile, $targetFile);
+            $results['components'][] = $targetFile;
         }
     }
 
@@ -235,32 +217,40 @@ class CreateStaffModule
         $templatesPath = base_path('storage/setup-templates/staff/livewire');
         $livewirePath = base_path('app/Livewire');
         $livewireViewsPath = base_path('resources/views/livewire');
-
+        
         if (!File::exists($livewirePath)) {
             File::makeDirectory($livewirePath, 0755, true);
         }
-
+        
         if (!File::exists($livewireViewsPath)) {
             File::makeDirectory($livewireViewsPath, 0755, true);
         }
 
-        // Copy StaffIndex Livewire component
+        // Copy Livewire class
         $templateFile = $templatesPath . '/StaffIndex.php';
         $targetFile = $livewirePath . '/StaffIndex.php';
-
+        
         if (File::exists($templateFile)) {
             File::copy($templateFile, $targetFile);
-            $results['livewire'][] = 'StaffIndex component created';
+            $results['livewire'][] = $targetFile;
         }
 
-        // Copy StaffIndex view
-        $templateViewPath = base_path('storage/setup-templates/staff/livewire/views');
-        $templateViewFile = $templateViewPath . '/staff-index.blade.php';
-        $targetViewFile = $livewireViewsPath . '/staff-index.blade.php';
-
-        if (File::exists($templateViewFile)) {
-            File::copy($templateViewFile, $targetViewFile);
-            $results['livewire_views'][] = 'staff-index.blade.php view created';
+        // Copy Livewire views
+        $viewsTemplatesPath = $templatesPath . '/views';
+        if (File::exists($viewsTemplatesPath)) {
+            $views = File::allFiles($viewsTemplatesPath);
+            foreach ($views as $view) {
+                $relativePath = $view->getRelativePathname();
+                $targetFile = $livewireViewsPath . '/' . $relativePath;
+                $targetDir = dirname($targetFile);
+                
+                if (!File::exists($targetDir)) {
+                    File::makeDirectory($targetDir, 0755, true);
+                }
+                
+                File::copy($view->getPathname(), $targetFile);
+                $results['livewire_views'][] = $targetFile;
+            }
         }
     }
 
@@ -271,15 +261,13 @@ class CreateStaffModule
     {
         $templatesPath = base_path('storage/setup-templates/staff/controllers');
         $controllersPath = base_path('app/Http/Controllers');
-
+        
         $templateFile = $templatesPath . '/StaffController.php';
         $targetFile = $controllersPath . '/StaffController.php';
-
+        
         if (File::exists($templateFile)) {
             File::copy($templateFile, $targetFile);
-            $results['controllers'][] = 'StaffController created from template';
-        } else {
-            $results['controllers'][] = 'StaffController template not found';
+            $results['controllers'][] = $targetFile;
         }
     }
 
@@ -290,23 +278,24 @@ class CreateStaffModule
     {
         $templatesPath = base_path('storage/setup-templates/staff/views/staff');
         $viewsPath = base_path('resources/views/staff');
-
+        
         if (!File::exists($viewsPath)) {
             File::makeDirectory($viewsPath, 0755, true);
         }
 
-        // Các view cần tạo
-        $views = ['index.blade.php', 'show.blade.php'];
-
-        foreach ($views as $view) {
-            $templateFile = $templatesPath . '/' . $view;
-            $targetFile = $viewsPath . '/' . $view;
-
-            if (File::exists($templateFile)) {
-                File::copy($templateFile, $targetFile);
-                $results['views'][] = "Staff view {$view} created from template";
-            } else {
-                $results['views'][] = "Staff view template {$view} not found";
+        if (File::exists($templatesPath)) {
+            $views = File::allFiles($templatesPath);
+            foreach ($views as $view) {
+                $relativePath = $view->getRelativePathname();
+                $targetFile = $viewsPath . '/' . $relativePath;
+                $targetDir = dirname($targetFile);
+                
+                if (!File::exists($targetDir)) {
+                    File::makeDirectory($targetDir, 0755, true);
+                }
+                
+                File::copy($view->getPathname(), $targetFile);
+                $results['views'][] = $targetFile;
             }
         }
     }
@@ -317,18 +306,16 @@ class CreateStaffModule
     private static function createRoutes(array &$results): void
     {
         $routesFile = base_path('routes/web.php');
+        
         $staffRoutes = "
 /*
 |--------------------------------------------------------------------------
 | Staff Routes
 |--------------------------------------------------------------------------
-| Routes for staff functionality with Livewire
+| Routes for staff management and display
 */
-Route::get('/staff', function() {
-    return view('staff.index');
-})->name('staff.index');
+Route::get('/staff', [App\Http\Controllers\StaffController::class, 'index'])->name('staff.index');
 Route::get('/staff/{slug}', [App\Http\Controllers\StaffController::class, 'show'])->name('staff.show');
-Route::get('/staff/position/{position}', [App\Http\Controllers\StaffController::class, 'position'])->name('staff.position');
 Route::get('/api/staff', [App\Http\Controllers\StaffController::class, 'api'])->name('staff.api');
 ";
 
@@ -352,9 +339,8 @@ Route::get('/api/staff', [App\Http\Controllers\StaffController::class, 'api'])->
                 '--force' => true,
                 '--path' => 'database/migrations'
             ]);
-            $results['migration_run'] = 'Migrations executed successfully';
+            $results['migration_run'] = 'Staff migrations executed successfully';
         } catch (\Exception $e) {
-            // Nếu lỗi, thử chạy từng migration riêng lẻ
             $results['migration_errors'][] = 'Failed to run migrations: ' . $e->getMessage();
 
             // Thử chạy từng migration staff riêng lẻ

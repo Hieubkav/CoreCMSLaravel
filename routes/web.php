@@ -67,3 +67,31 @@ Route::get('/blog', function() {
 })->name('blog.index');
 Route::get('/blog/{slug}', [App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 Route::get('/blog/category/{slug}', [App\Http\Controllers\BlogController::class, 'category'])->name('blog.category');
+
+/*
+|--------------------------------------------------------------------------
+| Staff Routes
+|--------------------------------------------------------------------------
+| Routes for staff functionality with Livewire
+*/
+Route::get('/staff', function() {
+    return view('staff.index');
+})->name('staff.index');
+Route::get('/staff/{slug}', [App\Http\Controllers\StaffController::class, 'show'])->name('staff.show');
+Route::get('/staff/position/{position}', [App\Http\Controllers\StaffController::class, 'position'])->name('staff.position');
+Route::get('/api/staff', [App\Http\Controllers\StaffController::class, 'api'])->name('staff.api');
+
+/*
+|--------------------------------------------------------------------------
+| Service Routes
+|--------------------------------------------------------------------------
+| Routes for service functionality with Livewire
+*/
+Route::get('/services', function() {
+    return view('service.index');
+})->name('services.index');
+Route::get('/services/category/{category}', [App\Http\Controllers\ServiceController::class, 'category'])->name('services.category');
+Route::get('/services/{slug}', [App\Http\Controllers\ServiceController::class, 'show'])->name('services.show');
+Route::get('/services-featured', [App\Http\Controllers\ServiceController::class, 'featured'])->name('service.featured');
+Route::get('/api/services', [App\Http\Controllers\ServiceController::class, 'api'])->name('service.api');
+Route::get('/api/services/search', [App\Http\Controllers\ServiceController::class, 'search'])->name('service.search');

@@ -65,18 +65,22 @@
             @if($hotPost)
             <div class="lg:col-span-1">
                 <article class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                    @if($hotPost->thumbnail)
-                        <div class="aspect-w-16 aspect-h-9 relative overflow-hidden">
-                            <img src="{{ Storage::url($hotPost->thumbnail) }}" 
+                    <div class="aspect-w-16 aspect-h-9 relative overflow-hidden">
+                        @if($hotPost->thumbnail)
+                            <img src="{{ Storage::url($hotPost->thumbnail) }}"
                                  alt="{{ $hotPost->title }}"
                                  class="w-full h-64 object-cover hover:scale-105 transition-transform duration-300">
-                            <div class="absolute top-4 left-4">
-                                <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                    Nổi bật
-                                </span>
+                        @else
+                            <div class="w-full h-64 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
+                                <i class="fas fa-newspaper text-4xl text-red-400"></i>
                             </div>
+                        @endif
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                Nổi bật
+                            </span>
                         </div>
-                    @endif
+                    </div>
                     
                     <div class="p-6">
                         <div class="flex items-center text-sm text-gray-500 mb-3">
@@ -125,13 +129,17 @@
                     @foreach($recentPosts as $post)
                     <article class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                         <div class="flex">
-                            @if($post->thumbnail)
-                                <div class="flex-shrink-0 w-32 h-24 relative overflow-hidden">
-                                    <img src="{{ Storage::url($post->thumbnail) }}" 
+                            <div class="flex-shrink-0 w-32 h-24 relative overflow-hidden">
+                                @if($post->thumbnail)
+                                    <img src="{{ Storage::url($post->thumbnail) }}"
                                          alt="{{ $post->title }}"
                                          class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
-                                </div>
-                            @endif
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                        <i class="fas fa-file-alt text-xl text-gray-400"></i>
+                                    </div>
+                                @endif
+                            </div>
                             
                             <div class="flex-1 p-4">
                                 <div class="flex items-center text-xs text-gray-500 mb-2">

@@ -48,7 +48,10 @@ class CreateServiceModule
             // 11. Cập nhật ViewServiceProvider
             self::updateViewServiceProvider($results);
 
-            // 12. Tạo và chạy seeders nếu được yêu cầu
+            // 12. Đợi một chút để đảm bảo files được ghi xong
+            sleep(1);
+
+            // 13. Tạo và chạy seeders nếu được yêu cầu
             if (isset($config['create_sample_data']) && $config['create_sample_data']) {
                 self::createSeeders($results);
                 self::runSeeders($results);
@@ -379,6 +382,24 @@ Route::get('/api/services/search', [App\Http\Controllers\ServiceController::clas
     private static function runSeeders(array &$results): void
     {
         try {
+            // Kiểm tra xem bảng services có tồn tại không
+            if (!\Illuminate\Support\Facades\Schema::hasTable('services')) {
+                $results['seeders_errors'][] = 'Services table not found. Skipping seeder.';
+                return;
+            }
+
+            // Force load model Service bằng cách require file trực tiếp
+            $servicePath = base_path('app/Models/Service.php');
+            if (file_exists($servicePath)) {
+                require_once $servicePath;
+            }
+
+            // Kiểm tra lại xem model có load được không
+            if (!class_exists('App\Models\Service')) {
+                $results['seeders_errors'][] = 'Service model could not be loaded. Skipping seeder.';
+                return;
+            }
+
             Artisan::call('db:seed', [
                 '--class' => 'ServiceSeeder',
                 '--force' => true

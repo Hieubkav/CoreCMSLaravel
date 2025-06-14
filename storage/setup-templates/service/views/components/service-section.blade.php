@@ -67,7 +67,7 @@
 
                         <!-- Service Title -->
                         <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-red-600 transition-colors">
-                            <a href="{{ route('service.show', $service->slug) }}">
+                            <a href="{{ route('services.show', $service->slug) }}">
                                 {{ $service->name }}
                             </a>
                         </h3>
@@ -102,7 +102,7 @@
                             <div class="text-lg font-bold text-red-600">
                                 {{ $service->formatted_price }}
                             </div>
-                            <a href="{{ route('service.show', $service->slug) }}" 
+                            <a href="{{ route('services.show', $service->slug) }}"
                                class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors group">
                                 Xem chi tiết
                                 <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>

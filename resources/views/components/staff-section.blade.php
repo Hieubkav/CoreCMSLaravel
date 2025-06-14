@@ -3,7 +3,9 @@
 @php
     $staff = collect();
     $positions = collect();
+    $globalSettings = null;
 
+    // Kiểm tra xem model Staff có tồn tại không
     if (class_exists('App\Models\Staff')) {
         try {
             // Lấy nhân viên theo thứ tự
@@ -25,6 +27,13 @@
             $staff = collect();
             $positions = collect();
         }
+    }
+
+    // Lấy global settings
+    try {
+        $globalSettings = \App\Models\Setting::first();
+    } catch (\Exception $e) {
+        $globalSettings = null;
     }
 @endphp
 
@@ -67,26 +76,34 @@
                 <!-- Avatar -->
                 <div class="relative">
                     <div class="aspect-w-1 aspect-h-1 bg-gray-100">
-                        <img src="{{ $member->image_url }}" 
-                             alt="{{ $member->name }}"
-                             class="w-full h-64 object-cover">
+                        @if($member->image_url)
+                            <img src="{{ $member->image_url }}"
+                                 alt="{{ $member->name }}"
+                                 class="w-full h-64 object-cover">
+                        @else
+                            <div class="w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                <i class="fas fa-user text-4xl text-gray-400"></i>
+                            </div>
+                        @endif
                     </div>
                     
                     <!-- Social Links Overlay -->
-                    @if($member->hasSocialLinks())
+                    @if(method_exists($member, 'hasSocialLinks') && $member->hasSocialLinks())
                     <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                         <div class="flex space-x-3">
-                            @foreach($member->social_links as $platform => $url)
-                                @if($url)
-                                    <a href="{{ $url }}" 
-                                       target="_blank" 
-                                       rel="noopener noreferrer"
-                                       class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-700 hover:text-red-600 transition-colors"
-                                       title="{{ ucfirst($platform) }}">
-                                        <i class="{{ \App\Models\Staff::getSocialIcon($platform) }}"></i>
-                                    </a>
-                                @endif
-                            @endforeach
+                            @if($member->social_links && is_array($member->social_links))
+                                @foreach($member->social_links as $platform => $url)
+                                    @if($url)
+                                        <a href="{{ $url }}"
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-700 hover:text-red-600 transition-colors"
+                                           title="{{ ucfirst($platform) }}">
+                                            <i class="{{ method_exists(\App\Models\Staff::class, 'getSocialIcon') ? \App\Models\Staff::getSocialIcon($platform) : 'fas fa-link' }}"></i>
+                                        </a>
+                                    @endif
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                     @endif

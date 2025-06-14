@@ -266,7 +266,7 @@
                         
                         <div class="p-6">
                             <h4 class="font-semibold text-gray-900 mb-2">
-                                <a href="{{ route('service.show', $relatedService->slug) }}" 
+                                <a href="{{ route('services.show', $relatedService->slug) }}"
                                    class="hover:text-red-600 transition-colors">
                                     {{ $relatedService->name }}
                                 </a>
@@ -280,7 +280,7 @@
                             
                             <div class="flex items-center justify-between">
                                 <span class="text-red-600 font-semibold">{{ $relatedService->formatted_price }}</span>
-                                <a href="{{ route('service.show', $relatedService->slug) }}" 
+                                <a href="{{ route('services.show', $relatedService->slug) }}"
                                    class="text-red-600 hover:text-red-700 text-sm font-medium">
                                     Xem chi tiết →
                                 </a>

@@ -339,6 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingModal.classList.remove('flex');
             submitBtn.disabled = false;
         });
+    });
 
     // Handle reset button
     resetBtn.addEventListener('click', function() {

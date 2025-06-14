@@ -1,17 +1,10 @@
 @php
-    $services = collect();
-    if (class_exists('App\Models\Service')) {
-        try {
-            $services = \App\Models\Service::where('status', 'active')
-                ->where('is_featured', true)
-                ->orderBy('order', 'asc')
-                ->orderBy('name', 'asc')
-                ->limit($limit ?? 6)
-                ->get();
-        } catch (\Exception $e) {
-            $services = collect();
-        }
-    }
+    $services = \App\Models\Service::where('status', 'active')
+        ->where('is_featured', true)
+        ->with(['images'])
+        ->ordered()
+        ->limit($limit ?? 6)
+        ->get();
 @endphp
 
 @if($services->count() > 0)
@@ -74,7 +67,7 @@
 
                         <!-- Service Title -->
                         <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-red-600 transition-colors">
-                            <a href="#" onclick="alert('Service detail page not implemented yet')">
+                            <a href="{{ route('services.show', $service->slug) }}">
                                 {{ $service->name }}
                             </a>
                         </h3>
@@ -109,7 +102,7 @@
                             <div class="text-lg font-bold text-red-600">
                                 {{ $service->formatted_price }}
                             </div>
-                            <a href="#" onclick="alert('Service detail page not implemented yet')"
+                            <a href="{{ route('services.show', $service->slug) }}"
                                class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors group">
                                 Xem chi tiết
                                 <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
@@ -122,7 +115,7 @@
 
         <!-- View All Button -->
         <div class="text-center mt-12">
-            <a href="#" onclick="alert('Services index page not implemented yet')"
+            <a href="{{ route('services.index') }}"
                class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-medium rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                 <i class="fas fa-th-large mr-2"></i>
                 Xem tất cả dịch vụ
